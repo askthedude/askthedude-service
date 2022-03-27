@@ -1,0 +1,1 @@
+# put here global project dependencies for indirection level between components

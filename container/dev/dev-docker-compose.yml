@@ -12,7 +12,7 @@ services:
       - --host
       - '0.0.0.0'
       - --port
-      - '83'
+      - '8084'
   storage:
     image: postgres:14
     restart: always
@@ -25,3 +25,4 @@ services:
       - storage:/var/lib/postgresql/data
 volumes:
   storage:
+    driver: local

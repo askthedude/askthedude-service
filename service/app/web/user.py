@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from dataclasses import dataclass
 
+
 router = APIRouter()
 
 
@@ -22,7 +23,7 @@ class PostUser(BaseModel):
     password: str
 
 
-@router.get("/user/{id}", response_model=GetUser)
+@router.get("/user/{id}", response_model=GetUser, )
 async def get_user(id: str):
     return GetUser(1, 'nika', 'sakana', 'email.com', True)
 
