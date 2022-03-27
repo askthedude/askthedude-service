@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from dataclasses import dataclass
 
+from dependencies.dependencies import storage
 
 router = APIRouter()
 

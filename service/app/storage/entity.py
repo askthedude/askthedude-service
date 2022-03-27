@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, ForeignKey, Boolean, Integer, String
+from sqlalchemy import Column, ForeignKey, Boolean, Integer, String
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -6,7 +6,6 @@ from .database import Base
 
 class User(Base):
     __tablename__ = "user"
-
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
@@ -17,12 +16,11 @@ class User(Base):
     linkedin_url = Column(String, nullable=False)
     oauth = Column(String)
 
-    # projects = relationship('Association', back_populates='user')
+    projects = relationship('Association', back_populates='user')
 
 
 class Project(Base):
     __tablename__ = "project"
-
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False, unique=True)
@@ -32,8 +30,8 @@ class Project(Base):
     url = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
 
-    # authors = relationship('Association', back_populates='project')
-    # technologies = relationship('Association', back_populates='project')
+    authors = relationship('Association', back_populates='project')
+    technologies = relationship('Association', back_populates='project')
 
 class Technology(Base):
     __tablename__ = "technology"
@@ -43,7 +41,7 @@ class Technology(Base):
     name = Column(String, nullable=False)
     resource_url = Column(String)
 
-    # projects = relationship('Association', back_populates='technology')
+    projects = relationship('Association', back_populates='technology')
 
 class UserProjectAssociation(Base):
     __tablename__ = 'user_project_association'
