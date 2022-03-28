@@ -8,7 +8,7 @@ elif [ $SERVICE = "storage" ]
 then
     if [ -z "$FLAG"  ]
     then
-        docker-compose -f dev-docker-compose.yml up -d storage
+        docker-compose -f dev-docker-compose.yml up -d storage --build --force-recreate
     elif [ $FLAG = "--drop" ]
     then
         echo "stopping container: dev_sotrage_1"

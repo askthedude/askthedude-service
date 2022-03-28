@@ -9,14 +9,14 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
+    name = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     github_url = Column(String, nullable=False)
     linkedin_url = Column(String, nullable=False)
     oauth = Column(String)
 
-    projects = relationship('Association', back_populates='user')
+    projects = relationship('UserProjectAssociation', back_populates='user')
 
 
 class Project(Base):
@@ -30,8 +30,9 @@ class Project(Base):
     url = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
 
-    authors = relationship('Association', back_populates='project')
-    technologies = relationship('Association', back_populates='project')
+    authors = relationship('UserProjectAssociation', back_populates='project')
+    technologies = relationship('ProjectTechnologyAssociation', back_populates='project')
+
 
 class Technology(Base):
     __tablename__ = "technology"
@@ -41,7 +42,8 @@ class Technology(Base):
     name = Column(String, nullable=False)
     resource_url = Column(String)
 
-    projects = relationship('Association', back_populates='technology')
+    projects = relationship('ProjectTechnologyAssociation', back_populates='technology')
+
 
 class UserProjectAssociation(Base):
     __tablename__ = 'user_project_association'

@@ -1,34 +1,16 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
-from dataclasses import dataclass
 
-from dependencies.dependencies import storage
+from dependencies.dependencies import GetUser, PostUser
+from service.user_service import add_new_user, get_user_with_id
 
 router = APIRouter()
 
 
-@dataclass
-class GetUser(BaseModel):
-    id: int
-    name: str
-    surname: str
-    email: str
-    is_active: bool
-
-
-@dataclass
-class PostUser(BaseModel):
-    name: str
-    surname: str
-    email: str
-    password: str
-
-
-@router.get("/user/{id}", response_model=GetUser, )
-async def get_user(id: str):
-    return GetUser(1, 'nika', 'sakana', 'email.com', True)
+@router.get("/user/{id}", response_model=GetUser)
+async def get_user(id: int):
+    return get_user_with_id(id)
 
 
 @router.post("/user/", response_model=GetUser)
 async def add_user(user: PostUser):
-    return GetUser(1, 'nika', 'sakana', 'email.com', True)
+    return add_new_user(user)
