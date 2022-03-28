@@ -23,3 +23,23 @@ class PostUser(BaseModel):
     github_url: str
     linkedin_url: Optional[str]
     oauth_token: str
+
+
+class PostProject(BaseModel):
+    title: str
+    description: str
+    start_date: str
+    stars: str
+    github_url: str
+    url: str
+
+
+class GetProject(BaseModel):
+    id: int
+    title: str
+    description: str
+    start_date: str
+    stars: str
+    github_url: str
+    url: str
+    is_active: bool
