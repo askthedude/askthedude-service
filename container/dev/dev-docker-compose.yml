@@ -1,9 +1,9 @@
 version: "3.3"
 
 services:
-  web-api:
+  api:
     build: ../../service
-    container_name: web-api
+    container_name: api
     ports:
       - 8084:8084
     command:
