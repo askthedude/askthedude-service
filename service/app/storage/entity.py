@@ -39,7 +39,7 @@ class Technology(Base):
 
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
     resource_url = Column(String)
 
     projects = relationship('ProjectTechnologyAssociation', back_populates='technology')
@@ -63,7 +63,7 @@ class ProjectTechnologyAssociation(Base):
 
     id = Column(Integer, primary_key=True)
     project_id = Column(ForeignKey('project.id'))
-    user_id = Column(ForeignKey('technology.id'))
+    technology_id = Column(ForeignKey('technology.id'))
     create_time = Column(String)
 
     technology = relationship('Technology', back_populates="projects")
