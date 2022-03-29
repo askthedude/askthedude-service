@@ -34,7 +34,7 @@ class PostProject(BaseModel):
     stars: str
     github_url: str
     url: str
-    user_ids: List[int]
+    user_id: int
     technology_ids: List[int]
 
 
@@ -45,7 +45,7 @@ class GetProject(BaseModel):
     stars: str
     github_url: str
     url: str
-    user_ids: List[int]
+    user_id: int
     technology_ids: List[int]
 
 

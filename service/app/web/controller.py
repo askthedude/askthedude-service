@@ -5,6 +5,7 @@ from service.service import add_new_user, get_user_with_id, add_new_project, add
 
 router = APIRouter()
 
+
 @router.get("/user/{id}")
 async def get_user(id: int):
     user = get_user_with_id(id)

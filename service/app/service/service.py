@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy.orm import Session
 
@@ -48,8 +48,7 @@ def add_new_project(project: PostProject) -> Optional[GetProject]:
     try:
         session = new_session()
         proj = storage.add_project_entity(project, session)
-        for user_id in project.user_ids:
-            storage.add_project_user_relation(proj.id, user_id, session)
+        storage.add_project_user_relation(proj.id, project.user_id, session)
         for tech_id in project.technology_ids:
             storage.add_project_technology_relation(proj.id, tech_id, session)
         session.commit()
@@ -68,3 +67,12 @@ def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
         session.refresh(tech)
     except Exception:
         return None
+
+
+def get_all_technologies() -> List[GetTechnology]:
+    try:
+        session = new_session()
+        techs = storage.get_all_technologies(session)
+        return techs
+    except Exception:
+        return []

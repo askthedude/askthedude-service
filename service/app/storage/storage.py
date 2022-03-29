@@ -42,3 +42,9 @@ class Storage():
         new_tech = Technology(name=technology.name, resource_url=technology.resource_url)
         session.add(new_tech)
         return new_tech
+
+    def get_technologies_with_title(self, title: str, session: Session):
+        return session.query(Technology).filter(Technology.name == title)
+
+    def get_all_technologies(self, session: Session):
+        return session.query(Technology).all()
