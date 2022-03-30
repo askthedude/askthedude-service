@@ -3,14 +3,14 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 
 from dependencies.dependencies import storage
-from dependencies.dependencies import PostUser, GetUser, PostProject, GetProject, PostTechnology, GetTechnology
+from dependencies.dependencies import PostUser, GetUser, PostProject, GetProject, PostTechnology, GetTechnology, ProjectFilter
 from storage.database import new_session
 
 
-def add_new_user(user: PostUser) -> Optional[GetUser]:
+async def add_new_user(user: PostUser) -> Optional[GetUser]:
     try:
         session = new_session()
-        is_present = _is_user_with_email_present(user.email, session)
+        is_present = await _is_user_with_email_present(user.email, session)
         if is_present:
             return None
         user = storage.add_user_entity(user, session)
@@ -22,7 +22,7 @@ def add_new_user(user: PostUser) -> Optional[GetUser]:
         return None
 
 
-def get_user_with_id(id: int) -> Optional[GetUser]:
+async def get_user_with_id(id: int) -> Optional[GetUser]:
     try:
         session = new_session()
         user = storage.get_uset_with_id(id, session)
@@ -36,7 +36,7 @@ def get_user_with_id(id: int) -> Optional[GetUser]:
         return None
 
 
-def _is_user_with_email_present(email: str, session: Session) -> bool:
+async def _is_user_with_email_present(email: str, session: Session) -> bool:
     try:
         user = storage.get_uset_with_email(email, session)
         return user is not None
@@ -44,7 +44,7 @@ def _is_user_with_email_present(email: str, session: Session) -> bool:
         return False
 
 
-def add_new_project(project: PostProject) -> Optional[GetProject]:
+async def add_new_project(project: PostProject) -> Optional[GetProject]:
     try:
         session = new_session()
         proj = storage.add_project_entity(project, session)
@@ -59,7 +59,7 @@ def add_new_project(project: PostProject) -> Optional[GetProject]:
         return None
 
 
-def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
+async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
     try:
         session = new_session()
         tech = storage.add_technology(technology, session)
@@ -69,10 +69,18 @@ def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
         return None
 
 
-def get_all_technologies() -> List[GetTechnology]:
+async def get_all_technologies() -> List[GetTechnology]:
     try:
         session = new_session()
         techs = storage.get_all_technologies(session)
         return techs
+    except Exception:
+        return []
+
+
+async def filter_projects(project_filter: ProjectFilter):
+    try:
+        session = new_session()
+        return storage.filter_projects(project_filter, session)
     except Exception:
         return []

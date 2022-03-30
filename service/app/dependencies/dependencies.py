@@ -58,3 +58,15 @@ class GetTechnology(BaseModel):
     id: int
     name: str
     resource_url: str
+
+
+# Below Dto is filled with default values to have flags for cases when outputs
+# shouldn't be filtered by specific field
+class ProjectFilter(BaseModel):
+    title: Optional[str] = ""
+    description: Optional[str] = ""
+    start_date: Optional[str]
+    stars: Optional[int] = -1
+    is_active: Optional[bool] = True
+    author_user_id: Optional[int] = -1
+    technology_ids: Optional[List[int]]=[]

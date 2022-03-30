@@ -48,3 +48,7 @@ class Storage():
 
     def get_all_technologies(self, session: Session):
         return session.query(Technology).all()
+
+    def filter_projects(self, project_filter, session: Session):
+        # use project filter object
+        return session.query(Project).outerjoin(ProjectTechnologyAssociation, Project.technologies).outerjoin(Technology, Technology.projects).all()
