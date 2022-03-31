@@ -1,3 +1,5 @@
+import asyncio
+
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -24,7 +26,7 @@ settings = Settings()
 
 engine = create_async_engine(
     settings.database_url,
-    echo=True
+    echo=True if settings.development_mode else False
 )
 
 new_session = sessionmaker(engine, autocommit=False, autoflush=False, class_=AsyncSession, expire_on_commit=False)
@@ -32,10 +34,11 @@ new_session = sessionmaker(engine, autocommit=False, autoflush=False, class_=Asy
 Base = declarative_base()
 
 
-
-
-async def initialize_storage_development_mode():
+async def init_db():
     async with engine.begin() as conn:
         if settings.development_mode:
+            print('dropping all')
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
+
+init_db()
