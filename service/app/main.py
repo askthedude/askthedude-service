@@ -1,16 +1,8 @@
 
 from fastapi import FastAPI
-from starlette.requests import Request
-
 import web.controller as router
-from utils.log_config import LogConfig
-from logging.config import dictConfig
-import logging
 
-dictConfig(LogConfig().dict())
-app = FastAPI()
-
-logger = logging.getLogger("WEBAPI")
+app = FastAPI(debug=True)
 
 
 # @app.middleware("http")

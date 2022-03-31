@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseSettings
 import os
 
@@ -21,20 +22,20 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-engine = create_engine(
-    settings.database_url
+engine = create_async_engine(
+    settings.database_url,
+    echo=True
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+new_session = sessionmaker(engine, autocommit=False, autoflush=False, class_=AsyncSession, expire_on_commit=False)
 
 Base = declarative_base()
 
 
-def initialize_storage_development_mode():
-    if settings.development_mode:
-        Base.metadata.drop_all(bind=engine)
-        Base.metadata.create_all(bind=engine)
 
 
-def new_session():
-    return SessionLocal()
+async def initialize_storage_development_mode():
+    async with engine.begin() as conn:
+        if settings.development_mode:
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)

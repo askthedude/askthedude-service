@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from logging.config import dictConfig
+import logging
 
 
 class LogConfig(BaseModel):
@@ -28,3 +30,7 @@ class LogConfig(BaseModel):
     loggers = {
         "mycoolapp": {"handlers": ["default"], "level": LOG_LEVEL},
     }
+
+
+dictConfig(LogConfig().dict())
+logger = logging.getLogger("WEBAPI")

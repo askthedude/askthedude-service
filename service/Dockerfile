@@ -9,7 +9,7 @@ RUN apt-get install -y pip
 
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
-    && pip install psycopg2
+    && pip install asyncpg
 
 
 WORKDIR /code

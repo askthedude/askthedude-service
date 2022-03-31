@@ -29,7 +29,7 @@ then
   echo "removing container: api"
   docker container stop api
   docker container rm api
-  docker-compose -f dev-docker-compose.yml up  -d --build --force-recreate api
+  docker-compose -f dev-docker-compose.yml up -d --no-deps --build --force-recreate api
   echo "Restarted container: api"
 elif [ $SERVICE = "help" ]
 then

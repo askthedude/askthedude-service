@@ -27,4 +27,3 @@ services:
       - storage:/var/lib/postgresql/data
 volumes:
   storage:
-    driver: local

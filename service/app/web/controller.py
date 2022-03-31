@@ -27,6 +27,7 @@ async def add_user(user: PostUser):
 @router.post("/project/")
 async def add_project(project: PostProject):
     new_proj = await add_new_project(project)
+    print(new_proj)
     if new_proj is None:
         raise HTTPException(status_code=409, detail="Couldn't add input project.")
     else:

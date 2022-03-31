@@ -37,7 +37,6 @@ class Project(Base):
 class Technology(Base):
     __tablename__ = "technology"
 
-
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
     resource_url = Column(String)
