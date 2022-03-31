@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     # you only run storage in docker but are using local machine for service
     database_url: str = 'postgresql://postgres:postgres@storage'
     development_mode: bool = False
+    drop_recreate_tables: bool = False
 
     class Config:
         env_file = os.path.join(os.path.dirname(__file__),'..',CONFIG_FOLDER_NAME,CONFIG_FILE_NAME)
@@ -36,9 +37,7 @@ Base = declarative_base()
 
 async def init_db():
     async with engine.begin() as conn:
-        if settings.development_mode:
-            print('dropping all')
+        if settings.development_mode and settings.drop_recreate_tables:
+            print("Dropping tables and recreating them")
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
-
-init_db()
