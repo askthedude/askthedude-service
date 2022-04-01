@@ -88,9 +88,12 @@ async def get_all_technologies() -> List[GetTechnology]:
 
 
 async def filter_projects(project_filter: ProjectFilter):
+    session = new_session()
     try:
-        session = await new_session()
-        return await storage.filter_projects(project_filter, session)
+        res = await storage.filter_projects(project_filter, session)
+        print(res)
+        return res
     except Exception as e:
+        session.rollback()
         print(e)
         return []

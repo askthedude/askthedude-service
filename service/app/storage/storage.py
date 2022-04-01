@@ -1,7 +1,9 @@
 from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, outerjoin
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from .entity import User, Project, Technology, UserProjectAssociation, ProjectTechnologyAssociation
 import datetime
 
@@ -56,7 +58,15 @@ class Storage():
         return res.all()
 
     async def filter_projects(self, project_filter, session: AsyncSession):
-        return []
+        q = select(Project)\
+            .options(selectinload(Project.technologies))\
+            .options(selectinload(Project.authors))\
+            .filter(Project.title.like('%'+project_filter.title+'%'))\
+            .filter(Project.description.like('%'+project_filter.description+'%'))\
+            .filter(Project.is_active == project_filter.is_active)\
+            # .filter(set(project_filter.technology_ids) <= set(Project.technologies))
+        res = await session.execute(q)
+        return res.all()
         # q = select(Project)
         # res = await session.execute(q)
         # return res.all()
