@@ -67,8 +67,3 @@ class Storage():
             # .filter(set(project_filter.technology_ids) <= set(Project.technologies))
         res = await session.execute(q)
         return res.all()
-        # q = select(Project)
-        # res = await session.execute(q)
-        # return res.all()
-        # use project filter object
-        # return await session.query(Project).outerjoin(ProjectTechnologyAssociation, Project.technologies).outerjoin(Technology, Technology.projects).all()
