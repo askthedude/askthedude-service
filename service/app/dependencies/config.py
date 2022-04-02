@@ -24,4 +24,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-database_url: str = f'postgresql://{settings.DATABASE_USER}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOST_URL}'
+database_url: str = f'postgresql+asyncpg://{settings.DATABASE_USER}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOST_URL}'

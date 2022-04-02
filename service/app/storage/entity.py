@@ -31,7 +31,7 @@ class Project(Base):
     url = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
 
-    authors = relationship('UserProjectAssociation', back_populates='project')
+    users = relationship('UserProjectAssociation', back_populates='project')
     technologies = relationship('ProjectTechnologyAssociation', back_populates='project')
     statistics = relationship('ProjectStatistics', back_populates="project")
 
@@ -53,9 +53,19 @@ class UserProjectAssociation(Base):
     project_id = Column(ForeignKey('project.id'), nullable=False)
     user_id = Column(ForeignKey('user.id'), nullable=False)
     create_time = Column(String)
+    is_active = Column(Boolean, default=True)
+    type_id = Column(ForeignKey('user_project_association_type.id'), nullable=False)
 
     user = relationship('User', back_populates="projects")
-    project = relationship('Project', back_populates="authors")
+    project = relationship('Project', back_populates="users")
+    type = relationship("UserProjectAssociationType")
+
+
+class UserProjectAssociationType(Base):
+    __tablename__ = 'user_project_association_type'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
 
 
 class ProjectTechnologyAssociation(Base):
@@ -101,13 +111,3 @@ class ProjectStatistics(Base):
     subscriptions = Column(Integer, default=0)
 
     project = relationship('Project', back_populates="statistics")
-
-
-class ProjectSubscription(Base):
-    __tablename__ = 'project_subscriptions'
-
-    id = Column(Integer, primary_key=True)
-    project_id = Column(ForeignKey("project.id"), nullable=False)
-    user_id = Column(ForeignKey("user.id"), nullable=False)
-    start_date = Column(String)
-    is_active = Column(Boolean, default=True)
