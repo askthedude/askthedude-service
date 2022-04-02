@@ -49,8 +49,8 @@ class UserProjectAssociation(Base):
     __tablename__ = 'user_project_association'
 
     id = Column(Integer, primary_key=True)
-    project_id = Column(ForeignKey('project.id'))
-    user_id = Column(ForeignKey('user.id'))
+    project_id = Column(ForeignKey('project.id'), nullable=False)
+    user_id = Column(ForeignKey('user.id'), nullable=False)
     create_time = Column(String)
 
     user = relationship('User', back_populates="projects")
@@ -62,8 +62,8 @@ class ProjectTechnologyAssociation(Base):
 
 
     id = Column(Integer, primary_key=True)
-    project_id = Column(ForeignKey('project.id'))
-    technology_id = Column(ForeignKey('technology.id'))
+    project_id = Column(ForeignKey('project.id'), nullable=False)
+    technology_id = Column(ForeignKey('technology.id'), nullable=False)
     create_time = Column(String)
 
     technology = relationship('Technology', back_populates="projects")
@@ -83,8 +83,8 @@ class UserRoleAssociation(Base):
     __tablename__ = 'user_role_association'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(ForeignKey('user.id'))
-    role_id = Column(ForeignKey('role.id'))
+    user_id = Column(ForeignKey('user.id'), nullable=False)
+    role_id = Column(ForeignKey('role.id'), nullable=False)
 
     user = relationship('User', back_populates="roles")
     role = relationship('Role', back_populates="users")

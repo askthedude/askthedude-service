@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseSettings
 import os
 
@@ -12,8 +14,8 @@ class Settings(BaseSettings):
     database_url: str = 'postgresql://postgres:postgres@storage'
     development_mode: bool = False
     drop_recreate_tables: bool = False
-    client_id: str = ""
-    client_secret: str = ""
+    client_id: Optional[str] = ""
+    client_secret: Optional[str] = ""
 
     class Config:
         env_file = os.path.join(os.path.dirname(__file__),'..',CONFIG_FOLDER_NAME,CONFIG_FILE_NAME)
