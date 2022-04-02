@@ -2,7 +2,6 @@ from fastapi import FastAPI
 import web.controller as router
 from storage.database import init_db
 
-
 app = FastAPI(debug=True)
 
 
@@ -16,4 +15,4 @@ async def init():
 #     response = await call_next(request)
 #     return response
 
-app.include_router(router.router)
+app.include_router(router.router, prefix="/api")

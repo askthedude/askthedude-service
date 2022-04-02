@@ -17,6 +17,7 @@ class User(Base):
     oauth = Column(String)
 
     projects = relationship('UserProjectAssociation', back_populates='user')
+    roles = relationship('UserRoleAssociation', back_populates="user")
 
 
 class Project(Base):
@@ -67,3 +68,23 @@ class ProjectTechnologyAssociation(Base):
 
     technology = relationship('Technology', back_populates="projects")
     project = relationship('Project', back_populates="technologies")
+
+
+class Role(Base):
+    __tablename__ = 'role'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String, nullable=False)
+
+    users = relationship('UserRoleAssociation', back_populates="role")
+
+
+class UserRoleAssociation(Base):
+    __tablename__ = 'user_role_association'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(ForeignKey('user.id'))
+    role_id = Column(ForeignKey('role.id'))
+
+    user = relationship('User', back_populates="roles")
+    role = relationship('Role', back_populates="users")
