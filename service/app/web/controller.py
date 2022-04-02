@@ -56,8 +56,3 @@ async def add_technology(technology: PostTechnology):
 async def filter_query_projects(project_filter: ProjectFilter):
     res = await filter_projects(project_filter)
     return res
-
-@router.get("/project/")
-async def filter_query_projects(project_filter: ProjectFilter):
-    res = await filter_projects(project_filter)
-    return res
