@@ -25,6 +25,7 @@ class PostUser(BaseModel):
     github_url: str
     linkedin_url: Optional[str]
     oauth_token: str
+    role_ids: List[int]
 
 
 class PostProject(BaseModel):
@@ -70,3 +71,13 @@ class ProjectFilter(BaseModel):
     is_active: Optional[bool] = True
     author_user_id: Optional[int] = -1
     technology_ids: Optional[List[int]]=[]
+
+
+class PostRole(BaseModel):
+    id: Optional[int]
+    title: str
+
+
+class GetRole(BaseModel):
+    id: int
+    title: str

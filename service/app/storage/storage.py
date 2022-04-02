@@ -4,7 +4,8 @@ from sqlalchemy import select, outerjoin
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from .entity import User, Project, Technology, UserProjectAssociation, ProjectTechnologyAssociation
+from .entity import User, Project, Technology, UserProjectAssociation,\
+    ProjectTechnologyAssociation, Role, UserRoleAssociation
 import datetime
 
 
@@ -67,3 +68,18 @@ class Storage():
             # .filter(set(project_filter.technology_ids) <= set(Project.technologies))
         res = await session.execute(q)
         return res.all()
+
+    def add_role_entity(self, role, session: AsyncSession):
+        role = Role(title=role.title)
+        session.add(role)
+        return role
+
+    def add_user_role_entity(self, user_id: int, role_id: int, session: AsyncSession):
+        user_role = UserRoleAssociation(user_id=user_id, role_id=role_id)
+        session.add(user_role)
+        return user_role
+
+    async def get_role_with_title(self, title: str, session: AsyncSession):
+        q = select(Role).where(Role.title == title)
+        res = await session.execute(q)
+        return res.first()

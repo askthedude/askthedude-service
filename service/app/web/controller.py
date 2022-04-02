@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
-from dependencies.dependencies import PostUser, PostProject, PostTechnology, ProjectFilter
-from service.service import add_new_user, get_user_with_id, add_new_project, add_new_technology, filter_projects
+from dependencies.dependencies import PostUser, PostProject, PostTechnology, ProjectFilter, PostRole
+from service.service import add_new_user, get_user_with_id,\
+    add_new_project, add_new_technology, filter_projects, add_role
 
 router = APIRouter()
 
@@ -13,6 +14,15 @@ async def get_user(id: int):
         raise HTTPException(status_code=404, detail="User not found")
     else:
         return user
+
+
+@router.post("/role/")
+async def add_user(role: PostRole):
+    new_role = await add_role(role)
+    if new_role is None:
+        raise HTTPException(status_code=409, detail="Couldn't add input role.")
+    else:
+        return new_role
 
 
 @router.post("/user/")
@@ -41,6 +51,11 @@ async def add_technology(technology: PostTechnology):
     else:
         return new_tech
 
+
+@router.get("/project/")
+async def filter_query_projects(project_filter: ProjectFilter):
+    res = await filter_projects(project_filter)
+    return res
 
 @router.get("/project/")
 async def filter_query_projects(project_filter: ProjectFilter):
