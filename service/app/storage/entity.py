@@ -9,7 +9,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
-    name = Column(String, unique=True, nullable=False)
+    name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     github_url = Column(String, nullable=False)
@@ -42,6 +42,7 @@ class Technology(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, unique=True)
     resource_url = Column(String)
+    is_hot = Column(Boolean, default=False)
 
     projects = relationship('ProjectTechnologyAssociation', back_populates='technology')
 
