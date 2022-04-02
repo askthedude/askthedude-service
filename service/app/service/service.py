@@ -25,7 +25,7 @@ async def add_new_user(user: PostUser) -> Optional[GetUser]:
         return None
 
 
-async def get_user_with_id(id: int) -> Optional[GetUser]:
+async def get_user_profile_with_id(id: int) -> Optional[GetUser]:
     session = new_session()
     try:
         user = await storage.get_uset_with_id(id, session)

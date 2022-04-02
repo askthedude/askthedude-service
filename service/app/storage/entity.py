@@ -33,6 +33,7 @@ class Project(Base):
 
     authors = relationship('UserProjectAssociation', back_populates='project')
     technologies = relationship('ProjectTechnologyAssociation', back_populates='project')
+    statistics = relationship('ProjectStatistics', back_populates="project")
 
 
 class Technology(Base):
@@ -88,3 +89,25 @@ class UserRoleAssociation(Base):
 
     user = relationship('User', back_populates="roles")
     role = relationship('Role', back_populates="users")
+
+
+class ProjectStatistics(Base):
+    __tablename__ = 'project_statistics'
+
+    id = Column(Integer, primary_key=True)
+    project_id = Column(ForeignKey('project.id'), nullable=False)
+    seen_frequency = Column(Integer, default=0)
+    number_of_interested = Column(Integer, default=0)
+    subscriptions = Column(Integer, default=0)
+
+    project = relationship('Project', back_populates="statistics")
+
+
+class ProjectSubscription(Base):
+    __tablename__ = 'project_subscriptions'
+
+    id = Column(Integer, primary_key=True)
+    project_id = Column(ForeignKey("project.id"), nullable=False)
+    user_id = Column(ForeignKey("user.id"), nullable=False)
+    start_date = Column(String)
+    is_active = Column(Boolean, default=True)

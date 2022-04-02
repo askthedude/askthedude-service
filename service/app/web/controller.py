@@ -1,15 +1,15 @@
 from fastapi import APIRouter, HTTPException
 
 from dependencies.dependencies import PostUser, PostProject, PostTechnology, ProjectFilter, PostRole
-from service.service import add_new_user, get_user_with_id,\
+from service.service import add_new_user, get_user_profile_with_id,\
     add_new_project, add_new_technology, filter_projects, add_role
 
 router = APIRouter()
 
 
 @router.get("/user/{id}")
-async def get_user(id: int):
-    user = await get_user_with_id(id)
+async def get_user_profile(id: int):
+    user = await get_user_profile_with_id(id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     else:
