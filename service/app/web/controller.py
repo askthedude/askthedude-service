@@ -1,12 +1,20 @@
 from fastapi import APIRouter, HTTPException
 
-from dependencies.dependencies import PostUser, PostProject, PostTechnology, ProjectFilter, PostRole
+from dependencies.dependencies import PostUser, PostProject, PostTechnology, ProjectFilter, PostRole, UserFilter
 from service.service import add_new_user, get_user_profile_with_id,\
     add_new_project, add_new_technology, filter_projects, add_role, \
-    get_project_by_id
+    get_project_by_id, filter_all_users
 
 router = APIRouter()
 
+
+@router.get("/user/")
+async def filter_users(user_filter: UserFilter):
+    users = await filter_all_users(user_filter)
+    if users is None:
+        raise HTTPException(status_code=404, detail="Users with applied filter not found")
+    else:
+        return users
 
 @router.get("/user/{id}")
 async def get_user_profile(id: int):

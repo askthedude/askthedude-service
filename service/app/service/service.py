@@ -1,5 +1,5 @@
 from typing import Optional, List
-from dependencies.dependencies import storage
+from dependencies.dependencies import storage, UserFilter
 from dependencies.dependencies import PostUser, GetUser, PostProject, \
     GetProject, PostTechnology, GetTechnology, ProjectFilter, PostRole, GetRole
 from storage.database import new_session
@@ -140,7 +140,7 @@ async def filter_projects(project_filter: ProjectFilter):
 async def get_project_by_id(id: int):
     session = new_session()
     try:
-        res = storage.get_project_by_id(id, session)
+        res = await storage.get_project_by_id(id, session)
         return res
     except Exception as e:
         print(e)
@@ -167,3 +167,17 @@ async def add_role(new_role: PostRole):
         return None
     finally:
         await session.close()
+
+
+async def filter_all_users(user_filter: UserFilter):
+    session = new_session()
+    try:
+        res = await storage.filter_users(user_filter, session)
+        return res
+    except Exception as e:
+        print(e)
+        await session.rollback()
+        return []
+    finally:
+        await session.close()
+

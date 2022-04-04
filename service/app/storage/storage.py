@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlalchemy import select, outerjoin
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload, contains_eager, subqueryload
 
 from .entity import User, Project, Technology, UserProjectAssociation, \
     ProjectTechnologyAssociation, Role, UserRoleAssociation, UserProjectAssociationType, \
@@ -76,9 +76,10 @@ class Storage():
         return res.all()
 
     async def filter_projects(self, project_filter, session: AsyncSession):
-        q = select(Project)\
-            .options(selectinload(Project.technologies))\
-            .options(selectinload(Project.authors))\
+        q = select(Project) \
+            .options(subqueryload(Project.technologies).subqueryload(ProjectTechnologyAssociation.technology)) \
+            .options(subqueryload(Project.users).subqueryload(UserProjectAssociation.user)) \
+            .options(subqueryload(Project.statistics)) \
             .filter(Project.title.like('%'+project_filter.title+'%'))\
             .filter(Project.description.like('%'+project_filter.description+'%'))\
             .filter(Project.is_active == project_filter.is_active)\
@@ -88,9 +89,9 @@ class Storage():
 
     async def get_project_by_id(self, id: int, session: AsyncSession):
         q = select(Project) \
-            .options(selectinload(Project.technologies)) \
-            .options(selectinload(Project.authors)) \
-            .options(selectinload(Project.statistics)) \
+            .options(subqueryload(Project.technologies).subqueryload(ProjectTechnologyAssociation.technology)) \
+            .options(subqueryload(Project.users).subqueryload(UserProjectAssociation.user)) \
+            .options(subqueryload(Project.statistics)) \
         .filter(Project.id == id)
         res = await session.execute(q)
         return res.first()
@@ -109,3 +110,13 @@ class Storage():
         q = select(Role).where(Role.title == title)
         res = await session.execute(q)
         return res.first()
+
+    async def filter_users(self, user_filter, session: AsyncSession):
+        q = select(User)\
+            .options(subqueryload(User.projects).subqueryload(UserProjectAssociation.project)) \
+            .filter(User.name.like('%'+ user_filter.name +'%' or
+                                   User.username.like('%' + user_filter.name + '%') or
+                                   User.email.like('%' + user_filter.name + '%') or
+                                   User.github_url.like('%' + user_filter.name + '%') ))
+        res = await session.execute(q)
+        return res.all()

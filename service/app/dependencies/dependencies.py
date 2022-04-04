@@ -73,6 +73,10 @@ class ProjectFilter(BaseModel):
     technology_ids: Optional[List[int]]=[]
 
 
+class UserFilter(BaseModel):
+    name: Optional[str] = ""
+
+
 class PostRole(BaseModel):
     id: Optional[int]
     title: str
