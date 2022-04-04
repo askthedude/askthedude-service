@@ -5,7 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from .entity import User, Project, Technology, UserProjectAssociation, \
-    ProjectTechnologyAssociation, Role, UserRoleAssociation, UserProjectAssociationType
+    ProjectTechnologyAssociation, Role, UserRoleAssociation, UserProjectAssociationType, \
+    ProjectStatistics
+
 import datetime
 
 
@@ -14,7 +16,6 @@ class Storage():
         q = select(User).where(User.id == id)
         res = await session.execute(q)
         return res.first()
-
 
     async def get_uset_with_email(self, email: str, session: AsyncSession) -> Optional[User]:
         q = select(User).where(User.email == email)
@@ -58,6 +59,11 @@ class Storage():
             .filter(UserProjectAssociationType.title == title)
         res = await session.execute(q)
         return res.first()
+
+    def add_blank_project_frequency_entity(self, project_id: int, session: AsyncSession):
+        entity = ProjectStatistics(project_id=project_id)
+        session.add(entity)
+        return entity
 
     async def get_technologies_with_title(self, title: str, session: AsyncSession):
         q = select(Technology).where(Technology.name == title)
