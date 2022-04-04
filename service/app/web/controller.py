@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException
 
 from dependencies.dependencies import PostUser, PostProject, PostTechnology, ProjectFilter, PostRole
 from service.service import add_new_user, get_user_profile_with_id,\
-    add_new_project, add_new_technology, filter_projects, add_role
+    add_new_project, add_new_technology, filter_projects, add_role, \
+    get_project_by_id
 
 router = APIRouter()
 
@@ -56,3 +57,12 @@ async def add_technology(technology: PostTechnology):
 async def filter_query_projects(project_filter: ProjectFilter):
     res = await filter_projects(project_filter)
     return res
+
+
+@router.get("/project/{id}")
+async def filter_query_projects(id: int):
+    res = await get_project_by_id(id)
+    if res is None:
+        raise HTTPException(status_code=404, detail="Couldn't find project with specified id.")
+    else:
+        return res

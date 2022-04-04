@@ -4,8 +4,8 @@ from sqlalchemy import select, outerjoin
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from .entity import User, Project, Technology, UserProjectAssociation,\
-    ProjectTechnologyAssociation, Role, UserRoleAssociation
+from .entity import User, Project, Technology, UserProjectAssociation, \
+    ProjectTechnologyAssociation, Role, UserRoleAssociation, UserProjectAssociationType
 import datetime
 
 
@@ -33,8 +33,8 @@ class Storage():
         session.add(new_proj)
         return new_proj
 
-    def add_project_user_relation(self, project_id: int, user_id: int, session: AsyncSession):
-        user_proj = UserProjectAssociation(project_id=project_id, user_id=user_id, create_time=datetime.datetime.now().isoformat())
+    def add_project_user_relation(self, project_id: int, user_id: int, proj_user_rel_type_id: int,  session: AsyncSession):
+        user_proj = UserProjectAssociation(project_id=project_id, user_id=user_id, create_time=datetime.datetime.now().isoformat(), type_id=proj_user_rel_type_id)
         session.add(user_proj)
         return user_proj
 
@@ -44,9 +44,20 @@ class Storage():
         return proj_tech
 
     def add_technology(self, technology, session: AsyncSession):
-        new_tech = Technology(name=technology.name, resource_url=technology.resource_url)
+        new_tech = Technology(name=technology.name, resource_url=technology.resource_url, is_hot=False)
         session.add(new_tech)
         return new_tech
+
+    def add_user_project_association_type_entity(self, title: str, session: AsyncSession):
+        entity = UserProjectAssociationType(title=title)
+        session.add(entity)
+        return entity
+
+    async def find_user_project_assoc_type_with_title(self, title: str, session: AsyncSession):
+        q = select(UserProjectAssociationType.id)\
+            .filter(UserProjectAssociationType.title == title)
+        res = await session.execute(q)
+        return res.first()
 
     async def get_technologies_with_title(self, title: str, session: AsyncSession):
         q = select(Technology).where(Technology.name == title)
@@ -68,6 +79,15 @@ class Storage():
             # .filter(set(project_filter.technology_ids) <= set(Project.technologies))
         res = await session.execute(q)
         return res.all()
+
+    async def get_project_by_id(self, id: int, session: AsyncSession):
+        q = select(Project) \
+            .options(selectinload(Project.technologies)) \
+            .options(selectinload(Project.authors)) \
+            .options(selectinload(Project.statistics)) \
+        .filter(Project.id == id)
+        res = await session.execute(q)
+        return res.first()
 
     def add_role_entity(self, role, session: AsyncSession):
         role = Role(title=role.title)

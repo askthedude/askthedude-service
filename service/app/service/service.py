@@ -23,6 +23,8 @@ async def add_new_user(user: PostUser) -> Optional[GetUser]:
         print(e)
         await session.rollback()
         return None
+    finally:
+        await session.close()
 
 
 async def get_user_profile_with_id(id: int) -> Optional[GetUser]:
@@ -39,6 +41,8 @@ async def get_user_profile_with_id(id: int) -> Optional[GetUser]:
         print(e)
         await session.rollback()
         return None
+    finally:
+        await session.close()
 
 
 async def _is_user_with_email_present(email: str, session) -> bool:
@@ -48,6 +52,25 @@ async def _is_user_with_email_present(email: str, session) -> bool:
     except Exception as e:
         print(e)
         return False
+    finally:
+        await session.close()
+
+
+async def add_new_user_project_association_type(title: str):
+    session = new_session()
+    try:
+        res = await storage.find_user_project_assoc_type_with_title(title, session)
+        if res:
+            return None
+        else:
+            storage.add_user_project_association_type_entity(title, session)
+            await session.commit()
+    except Exception as e:
+        print(e)
+        await session.rollback()
+        return None
+    finally:
+        await session.close()
 
 
 async def add_new_project(project: PostProject) -> Optional[GetProject]:
@@ -55,7 +78,8 @@ async def add_new_project(project: PostProject) -> Optional[GetProject]:
     try:
         proj = storage.add_project_entity(project, session)
         await session.flush()
-        storage.add_project_user_relation(proj.id, project.user_id, session)
+        res = await storage.find_user_project_assoc_type_with_title("ADMIN", session)
+        storage.add_project_user_relation(proj.id, project.user_id, res[0], session)
         for tech_id in project.technology_ids:
             storage.add_project_technology_relation(proj.id, tech_id, session)
         await session.commit()
@@ -67,6 +91,8 @@ async def add_new_project(project: PostProject) -> Optional[GetProject]:
         print(e)
         await session.rollback()
         return None
+    finally:
+        await session.close()
 
 
 async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
@@ -80,6 +106,8 @@ async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnolo
         await session.rollback()
         print(e)
         return None
+    finally:
+        await session.close()
 
 
 async def get_all_technologies() -> List[GetTechnology]:
@@ -91,18 +119,34 @@ async def get_all_technologies() -> List[GetTechnology]:
         print(e)
         await session.rollback()
         return []
+    finally:
+        await session.close()
 
 
 async def filter_projects(project_filter: ProjectFilter):
     session = new_session()
     try:
         res = await storage.filter_projects(project_filter, session)
-        print(res)
         return res
     except Exception as e:
         print(e)
         await session.rollback()
         return []
+    finally:
+        await session.close()
+
+
+async def get_project_by_id(id: int):
+    session = new_session()
+    try:
+        res = storage.get_project_by_id(id, session)
+        return res
+    except Exception as e:
+        print(e)
+        await session.rollback()
+        return None
+    finally:
+        await session.close()
 
 
 async def add_role(new_role: PostRole):
@@ -120,3 +164,5 @@ async def add_role(new_role: PostRole):
         print(e)
         await session.rollback()
         return None
+    finally:
+        await session.close()
