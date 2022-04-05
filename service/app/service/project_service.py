@@ -2,8 +2,10 @@ from typing import Optional, List
 from dependencies.dependencies import storage
 from dependencies.dependencies import PostProject, \
     GetProject, PostTechnology, GetTechnology, ProjectFilter
+from service.domain.domain import ProjectDeclaration, TechnologyDeclaration
 from storage.database import new_session
 
+import storage.facade.project_storage_facade as project_facade
 
 async def add_new_user_project_association_type(title: str):
     session = new_session()
@@ -72,16 +74,13 @@ async def get_all_technologies() -> List[GetTechnology]:
         await session.close()
 
 
-async def filter_projects(project_filter: ProjectFilter):
-    session = new_session()
-    try:
-        res = await storage.filter_projects(project_filter, session)
-        return res
-    except Exception as e:
-        print(e)
-        return []
-    finally:
-        await session.close()
+async def search_projects(project_filter: ProjectFilter) -> List[ProjectDeclaration]:
+    projects = await project_facade.filter_projects(project_filter)
+    result = []
+    for project in projects:
+        techs = [TechnologyDeclaration(tech.technology.id, tech.technology.name, tech.technology.is_hot, tech.technology.resource_url) for tech in project.Project.technologies]
+        result.append(ProjectDeclaration(project.Project.title, project.Project.description, project.Project.stars, project.Project.is_active, project.Project.id, project.Project.url, project.Project.start_date, techs))
+    return result
 
 
 async def get_project_by_id(id: int):

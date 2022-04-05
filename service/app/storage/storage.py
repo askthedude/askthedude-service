@@ -77,6 +77,7 @@ class Storage():
 
     async def filter_projects(self, project_filter, session: AsyncSession):
         q = select(Project) \
+            .options(subqueryload(Project.technologies).subqueryload(ProjectTechnologyAssociation.technology)) \
             .filter(Project.title.like('%'+project_filter.title+'%'))\
             .filter(Project.description.like('%'+project_filter.description+'%'))\
             .filter(Project.is_active == project_filter.is_active)\
