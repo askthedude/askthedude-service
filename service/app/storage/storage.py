@@ -13,12 +13,12 @@ import datetime
 
 class Storage():
     async def get_uset_with_id(self, id: int, session: AsyncSession) -> Optional[User]:
-        q = select(User).where(User.id == id)
+        q = select(User).filter(User.id == id)
         res = await session.execute(q)
         return res.first()
 
     async def get_uset_with_email(self, email: str, session: AsyncSession) -> Optional[User]:
-        q = select(User).where(User.email == email)
+        q = select(User).filter(User.email == email)
         res = await session.execute(q)
         return res.first()
 
@@ -66,7 +66,7 @@ class Storage():
         return entity
 
     async def get_technologies_with_title(self, title: str, session: AsyncSession):
-        q = select(Technology).where(Technology.name == title)
+        q = select(Technology).filter(Technology.name == title)
         res = await session.execute(q)
         return res.all()
 
@@ -83,6 +83,8 @@ class Storage():
             .filter(Project.title.like('%'+project_filter.title+'%'))\
             .filter(Project.description.like('%'+project_filter.description+'%'))\
             .filter(Project.is_active == project_filter.is_active)\
+            .limit(project_filter.limit) \
+            .offset(project_filter.offset)
             # .filter(set(project_filter.technology_ids) <= set(Project.technologies))
         res = await session.execute(q)
         return res.all()
@@ -107,7 +109,7 @@ class Storage():
         return user_role
 
     async def get_role_with_title(self, title: str, session: AsyncSession):
-        q = select(Role).where(Role.title == title)
+        q = select(Role).filter(Role.title == title)
         res = await session.execute(q)
         return res.first()
 

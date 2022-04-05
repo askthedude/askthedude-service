@@ -61,6 +61,9 @@ class GetTechnology(BaseModel):
     resource_url: str
 
 
+LIMIT_CONSTANT = 20
+OFFSET_INIT_CONSTANT = 0
+
 # Below Dto is filled with default values to have flags for cases when outputs
 # shouldn't be filtered by specific field
 class ProjectFilter(BaseModel):
@@ -71,6 +74,9 @@ class ProjectFilter(BaseModel):
     is_active: Optional[bool] = True
     author_user_id: Optional[int] = -1
     technology_ids: Optional[List[int]]=[]
+    # below is paging functionality
+    offset: Optional[int] = OFFSET_INIT_CONSTANT
+    limit: Optional[int] = LIMIT_CONSTANT
 
 
 class UserFilter(BaseModel):
