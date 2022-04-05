@@ -77,15 +77,11 @@ class Storage():
 
     async def filter_projects(self, project_filter, session: AsyncSession):
         q = select(Project) \
-            .options(subqueryload(Project.technologies).subqueryload(ProjectTechnologyAssociation.technology)) \
-            .options(subqueryload(Project.users).subqueryload(UserProjectAssociation.user)) \
-            .options(subqueryload(Project.statistics)) \
             .filter(Project.title.like('%'+project_filter.title+'%'))\
             .filter(Project.description.like('%'+project_filter.description+'%'))\
             .filter(Project.is_active == project_filter.is_active)\
             .limit(project_filter.limit) \
             .offset(project_filter.offset)
-            # .filter(set(project_filter.technology_ids) <= set(Project.technologies))
         res = await session.execute(q)
         return res.all()
 
@@ -119,6 +115,8 @@ class Storage():
             .filter(User.name.like('%'+ user_filter.name +'%' or
                                    User.username.like('%' + user_filter.name + '%') or
                                    User.email.like('%' + user_filter.name + '%') or
-                                   User.github_url.like('%' + user_filter.name + '%') ))
+                                   User.github_url.like('%' + user_filter.name + '%') ))\
+            .offset(user_filter.offset) \
+            .limit(user_filter.limit)
         res = await session.execute(q)
         return res.all()

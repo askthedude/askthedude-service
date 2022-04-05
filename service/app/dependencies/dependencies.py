@@ -61,8 +61,9 @@ class GetTechnology(BaseModel):
     resource_url: str
 
 
-LIMIT_CONSTANT = 20
+LIMIT_CONSTANT = 10
 OFFSET_INIT_CONSTANT = 0
+
 
 # Below Dto is filled with default values to have flags for cases when outputs
 # shouldn't be filtered by specific field
@@ -81,6 +82,8 @@ class ProjectFilter(BaseModel):
 
 class UserFilter(BaseModel):
     name: Optional[str] = ""
+    offset: Optional[int] = OFFSET_INIT_CONSTANT
+    limit: Optional[int] = LIMIT_CONSTANT
 
 
 class PostRole(BaseModel):
