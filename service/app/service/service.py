@@ -39,7 +39,6 @@ async def get_user_profile_with_id(id: int) -> Optional[GetUser]:
             return None
     except Exception as e:
         print(e)
-        await session.rollback()
         return None
     finally:
         await session.close()
@@ -118,7 +117,6 @@ async def get_all_technologies() -> List[GetTechnology]:
         return techs
     except Exception as e:
         print(e)
-        await session.rollback()
         return []
     finally:
         await session.close()
@@ -131,7 +129,6 @@ async def filter_projects(project_filter: ProjectFilter):
         return res
     except Exception as e:
         print(e)
-        await session.rollback()
         return []
     finally:
         await session.close()
@@ -144,7 +141,6 @@ async def get_project_by_id(id: int):
         return res
     except Exception as e:
         print(e)
-        await session.rollback()
         return None
     finally:
         await session.close()
@@ -176,7 +172,6 @@ async def filter_all_users(user_filter: UserFilter):
         return res
     except Exception as e:
         print(e)
-        await session.rollback()
         return []
     finally:
         await session.close()
