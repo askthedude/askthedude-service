@@ -78,9 +78,12 @@ class Storage():
     async def filter_projects(self, project_filter, session: AsyncSession):
         q = select(Project) \
             .options(subqueryload(Project.technologies).subqueryload(ProjectTechnologyAssociation.technology)) \
+            .options(subqueryload(Project.users).subqueryload(UserProjectAssociation.user))\
+            .options(subqueryload(Project.users).subqueryload(UserProjectAssociation.type))\
             .filter(Project.title.like('%'+project_filter.title+'%'))\
             .filter(Project.description.like('%'+project_filter.description+'%'))\
-            .filter(Project.is_active == project_filter.is_active)\
+            .filter(Project.is_active == project_filter.is_active) \
+            .filter(UserProjectAssociationType.title == 'ADMIN') \
             .limit(project_filter.limit) \
             .offset(project_filter.offset)
         res = await session.execute(q)

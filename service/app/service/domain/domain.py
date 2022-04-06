@@ -20,6 +20,7 @@ class PartialProjectData:
     url: str
     start_date: str
     technologies: List[TechnologyData]
+    authors: List[str]
 
 
 @dataclass
