@@ -1,96 +1,43 @@
 from typing import Optional, List
-from dependencies.dependencies import storage
 from dependencies.dependencies import PostProject, \
     GetProject, PostTechnology, GetTechnology, ProjectFilter
-from service.domain.domain import ProjectDeclaration, TechnologyDeclaration
-from storage.database import new_session
+from service.domain.domain import PartialProjectData, TechnologyData, \
+    CompleteProjectData, StatisticsData, UserData
 
 import storage.facade.project_storage_facade as project_facade
 
-async def add_new_user_project_association_type(title: str):
-    session = new_session()
-    try:
-        res = await storage.find_user_project_assoc_type_with_title(title, session)
-        if res:
-            return None
-        else:
-            storage.add_user_project_association_type_entity(title, session)
-            await session.commit()
-    except Exception as e:
-        print(e)
-        await session.rollback()
-        return None
-    finally:
-        await session.close()
-
 
 async def add_new_project(project: PostProject) -> Optional[GetProject]:
-    session = new_session()
-    try:
-        proj = storage.add_project_entity(project, session)
-        await session.flush()
-        res = await storage.find_user_project_assoc_type_with_title("ADMIN", session)
-        storage.add_project_user_relation(proj.id, project.user_id, res[0], session)
-        for tech_id in project.technology_ids:
-            storage.add_project_technology_relation(proj.id, tech_id, session)
-        storage.add_blank_project_frequency_entity(proj.id, session)
-        await session.commit()
-        res = GetProject(id=proj.id, title=proj.title, description=proj.description, start_date=proj.start_date,
-                          stars=proj.stars, github_url=proj.url, url=proj.url, is_active=proj.is_active, user_id=project.user_id,
-                         technology_ids=project.technology_ids)
-        return res
-    except Exception as e:
-        print(e)
-        await session.rollback()
-        return None
-    finally:
-        await session.close()
+    result = await project_facade.add_new_project(project)
+    return result
 
 
 async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
-    session = new_session()
-    try:
-        tech = storage.add_technology(technology, session)
-        await session.commit()
-        await session.refresh(tech)
-        return tech
-    except Exception as e:
-        await session.rollback()
-        print(e)
-        return None
-    finally:
-        await session.close()
+   result = await project_facade.add_new_technology(technology)
+   return result
 
 
 async def get_all_technologies() -> List[GetTechnology]:
-    session = new_session()
-    try:
-        techs = await storage.get_all_technologies(session)
-        return techs
-    except Exception as e:
-        print(e)
-        return []
-    finally:
-        await session.close()
+    result = await project_facade.get_all_technologies()
+    return result
 
 
-async def search_projects(project_filter: ProjectFilter) -> List[ProjectDeclaration]:
+async def search_projects(project_filter: ProjectFilter) -> List[PartialProjectData]:
     projects = await project_facade.filter_projects(project_filter)
     result = []
     for project in projects:
-        techs = [TechnologyDeclaration(tech.technology.id, tech.technology.name, tech.technology.is_hot, tech.technology.resource_url) for tech in project.Project.technologies]
-        result.append(ProjectDeclaration(project.Project.title, project.Project.description, project.Project.stars, project.Project.is_active, project.Project.id, project.Project.url, project.Project.start_date, techs))
+        techs = [TechnologyData(tech.technology.id, tech.technology.name, tech.technology.is_hot, tech.technology.resource_url) for tech in project.Project.technologies]
+        result.append(PartialProjectData(project.Project.title, project.Project.description, project.Project.stars, project.Project.is_active, project.Project.id, project.Project.url, project.Project.start_date, techs))
     return result
 
 
 async def get_project_by_id(id: int):
-    session = new_session()
-    try:
-        res = await storage.get_project_by_id(id, session)
-        return res
-    except Exception as e:
-        print(e)
-        return None
-    finally:
-        await session.close()
-
+    project = await project_facade.get_project_by_id(id)
+    technologies = [TechnologyData(tech.technology.id, tech.technology.name, tech.technology.is_hot, tech.technology.resource_url) for tech in project.Project.technologies]
+    users = [UserData(user.user.id, user.user.username, user.user.email, user.user.github_url, user.user.name, user.user.is_active, user.user.linkedin_url) for user in project.Project.users]
+    sample_stats = project.Project.statistics[0]
+    stats = StatisticsData(sample_stats.id, sample_stats.number_of_interested, sample_stats.subscriptions, sample_stats.seen_frequency)
+    result = CompleteProjectData(project.Project.title, project.Project.description, project.Project.stars,
+                                 project.Project.is_active, project.Project.id, project.Project.url,
+                                 project.Project.start_date, technologies, users, stats)
+    return result

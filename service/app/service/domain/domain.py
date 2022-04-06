@@ -3,7 +3,7 @@ from typing import List
 
 
 @dataclass
-class TechnologyDeclaration:
+class TechnologyData:
     id: int
     title: str
     is_hot: bool
@@ -11,7 +11,7 @@ class TechnologyDeclaration:
 
 
 @dataclass
-class ProjectDeclaration:
+class PartialProjectData:
     title: str
     description: str
     stars: int
@@ -19,5 +19,38 @@ class ProjectDeclaration:
     id: int
     url: str
     start_date: str
-    technologies: List[TechnologyDeclaration]
+    technologies: List[TechnologyData]
+
+
+@dataclass
+class UserData:
+    id: int
+    username: str
+    email: str
+    github_url: str
+    name: str
+    is_active: str
+    linkedin_url: str
+
+
+@dataclass
+class StatisticsData:
+    id: int
+    number_of_interested: int
+    subscriptions: int
+    seen_frequency: int
+
+
+@dataclass
+class CompleteProjectData:
+    title: str
+    description: str
+    stars: int
+    is_active: bool
+    id: int
+    url: str
+    start_date: str
+    technologies: List[TechnologyData]
+    users: List[UserData]
+    stats: StatisticsData
 
