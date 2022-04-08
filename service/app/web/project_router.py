@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from dependencies.dependencies import PostProject, PostTechnology, ProjectFilter
+from web.dto.dto import PostProject, PostTechnology, ProjectFilter
 from service.project_service import add_new_project, add_new_technology, \
     search_projects, get_project_by_id
 

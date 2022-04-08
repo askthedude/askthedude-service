@@ -6,11 +6,8 @@ Create Date: 2022-04-04 20:52:24.451525
 
 """
 from alembic import op
-import sqlalchemy as sa
 from sqlalchemy import orm
 from storage.entity import UserProjectAssociationType
-from dependencies.dependencies import storage
-
 
 # revision identifiers, used by Alembic.
 revision = '622eb3dbe375'

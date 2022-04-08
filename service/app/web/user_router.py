@@ -1,4 +1,4 @@
-from dependencies.dependencies import PostUser, PostRole, UserFilter
+from web.dto.dto import PostUser, PostRole, UserFilter
 from service.user_service import add_new_user, \
     get_user_profile_with_id, add_role, filter_all_users
 

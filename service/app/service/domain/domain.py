@@ -35,6 +35,18 @@ class UserData:
 
 
 @dataclass
+class CompleteUserData:
+    id: int
+    username: str
+    email: str
+    github_url: str
+    name: str
+    is_active: str
+    linkedin_url: str
+    projects: List[PartialProjectData]
+
+
+@dataclass
 class StatisticsData:
     id: int
     number_of_interested: int

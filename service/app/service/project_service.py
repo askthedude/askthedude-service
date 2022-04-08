@@ -1,5 +1,5 @@
 from typing import Optional, List
-from dependencies.dependencies import PostProject, \
+from web.dto.dto import PostProject, \
     GetProject, PostTechnology, GetTechnology, ProjectFilter
 from service.domain.domain import PartialProjectData, TechnologyData, \
     CompleteProjectData, StatisticsData, UserData

@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from dependencies.dependencies import ProjectFilter, storage, PostProject, \
+from web.dto.dto import ProjectFilter, storage, PostProject, \
     GetProject, PostTechnology, GetTechnology
 from storage.database import new_session
 

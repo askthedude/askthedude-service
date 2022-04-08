@@ -12,8 +12,10 @@ import datetime
 
 
 class Storage():
-    async def get_uset_with_id(self, id: int, session: AsyncSession) -> Optional[User]:
-        q = select(User).filter(User.id == id)
+    async def get_user_with_id(self, id: int, session: AsyncSession) -> Optional[User]:
+        q = select(User) \
+            .options(subqueryload(User.projects).subqueryload(UserProjectAssociation.project)) \
+            .filter(User.id == id)
         res = await session.execute(q)
         return res.first()
 
