@@ -9,7 +9,7 @@ storage = Storage()
 
 
 class GetUser(BaseModel):
-    id: int
+    id: Optional[int]
     name: str
     username: str
     email: str
@@ -17,6 +17,14 @@ class GetUser(BaseModel):
     github_url: str
     linkedin_url: str
 
+
+class GetUserWithoutId(BaseModel):
+    name: str
+    username: str
+    email: str
+    is_active: bool
+    github_url: str
+    linkedin_url: str
 
 class PostUser(BaseModel):
     name: str

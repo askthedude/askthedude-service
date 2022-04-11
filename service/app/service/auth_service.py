@@ -1,6 +1,6 @@
 import re
 from utils.auth import get_hashed_password, check_password
-from web.dto.dto import PostUser, SignInUser
+from web.dto.dto import PostUser, SignInUser, GetUserWithoutId
 
 import storage.facade.user_storage_facade as user_facade
 from utils.auth import signJWT
@@ -16,17 +16,20 @@ async def add_new_user(user: PostUser):
             return None
         user.password = hashed_psswd
         result = await user_facade.add_new_user(user)
-        return {"token": signJWT(result.id)}
+        return {"token": signJWT(result.id), "user": result}
     else:
         print("Email not valid")
         return None
 
 
 async def sign_in_user(user: SignInUser):
-    user_data = await user_facade.get_user_profile_with_username(user.username)
-    if user_data:
-        if check_password(user.password, user_data.User.hashed_password):
-            return { "token": signJWT(user_data.User.id)}
+    res = await user_facade.get_user_profile_with_username(user.username)
+    if res:
+        res = res.User
+        if check_password(user.password, res.hashed_password):
+            user_data = GetUserWithoutId(username=res.username, name=res.name, email=res.email, is_active=res.is_active,
+                       github_url=res.github_url, linkedin_url=res.linkedin_url)
+            return { "token": signJWT(res.id), "user": user_data}
         else:
             return None
     else:
