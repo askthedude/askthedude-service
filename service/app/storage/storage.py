@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import subqueryload
 
@@ -126,3 +126,13 @@ class Storage():
             .limit(user_filter.limit)
         res = await session.execute(q)
         return res.all()
+
+    async def update_project_stats(self, stats, session: AsyncSession):
+        q = select(ProjectStatistics)\
+            .filter(ProjectStatistics.project_id == stats.project_id)
+        res = await session.execute(q)
+        project_stats = res.first()
+        project_stats.ProjectStatistics.seen_frequency += stats.delta_seen_frequency
+        project_stats.ProjectStatistics.number_of_interested += stats.delta_number_of_interested
+        project_stats.ProjectStatistics.subscriptions += stats.delta_subscriptions
+        return project_stats

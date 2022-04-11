@@ -1,6 +1,6 @@
 from typing import Optional, List
 from web.dto.dto import PostProject, \
-    GetProject, PostTechnology, GetTechnology, ProjectFilter
+    GetProject, PostTechnology, GetTechnology, ProjectFilter, PostStatistics
 from service.domain.domain import PartialProjectData, TechnologyData, \
     CompleteProjectData, StatisticsData, UserData
 
@@ -42,3 +42,10 @@ async def get_project_by_id(id: int):
                                  project.Project.is_active, project.Project.id, project.Project.url,
                                  project.Project.start_date, technologies, users, stats)
     return result
+
+
+async def post_project_statistics(stats: PostStatistics):
+    new_projects_stats = await project_facade.update_project_stats(stats)
+    sample_stats = new_projects_stats.ProjectStatistics
+    res = StatisticsData(sample_stats.id, sample_stats.number_of_interested, sample_stats.subscriptions, sample_stats.seen_frequency)
+    return res
