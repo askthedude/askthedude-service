@@ -86,6 +86,7 @@ async def update_project_stats(id: int, stats: PostStatistics):
         await session.commit()
         return techs
     except Exception as e:
+        print('erororororor')
         await session.rollback()
         print(e)
         return []
