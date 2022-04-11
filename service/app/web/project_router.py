@@ -41,8 +41,8 @@ async def filter_query_projects(id: int):
 
 
 @router.post("/project/{id}/stats")
-async def filter_query_projects(stats: PostStatistics):
-    res = await post_project_statistics(stats)
+async def filter_query_projects(id: int, stats: PostStatistics):
+    res = await post_project_statistics(id, stats)
     if res is None:
         raise HTTPException(status_code=409, detail="Couldn't Update project statistics.")
     else:

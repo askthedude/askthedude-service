@@ -44,8 +44,8 @@ async def get_project_by_id(id: int):
     return result
 
 
-async def post_project_statistics(stats: PostStatistics):
-    new_projects_stats = await project_facade.update_project_stats(stats)
+async def post_project_statistics(id:int, stats: PostStatistics):
+    new_projects_stats = await project_facade.update_project_stats(id, stats)
     sample_stats = new_projects_stats.ProjectStatistics
     res = StatisticsData(sample_stats.id, sample_stats.number_of_interested, sample_stats.subscriptions, sample_stats.seen_frequency)
     return res

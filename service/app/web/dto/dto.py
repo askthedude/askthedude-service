@@ -97,7 +97,6 @@ class GetRole(BaseModel):
 
 
 class PostStatistics(BaseModel):
-    project_id: int
     delta_seen_frequency: Optional[int] = 0
     delta_number_of_interested: Optional[int] = 0
     delta_subscriptions: Optional[int] = 0

@@ -127,9 +127,9 @@ class Storage():
         res = await session.execute(q)
         return res.all()
 
-    async def update_project_stats(self, stats, session: AsyncSession):
+    async def update_project_stats(self, id, stats, session: AsyncSession):
         q = select(ProjectStatistics)\
-            .filter(ProjectStatistics.project_id == stats.project_id)
+            .filter(ProjectStatistics.project_id == id)
         res = await session.execute(q)
         project_stats = res.first()
         project_stats.ProjectStatistics.seen_frequency += stats.delta_seen_frequency

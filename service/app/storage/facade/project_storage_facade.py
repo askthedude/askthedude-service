@@ -79,10 +79,10 @@ async def get_all_technologies() -> List[GetTechnology]:
         await session.close()
 
 
-async def update_project_stats(stats: PostStatistics):
+async def update_project_stats(id: int, stats: PostStatistics):
     session = new_session()
     try:
-        techs = await storage.update_project_stats(stats, session)
+        techs = await storage.update_project_stats(id, stats, session)
         await session.commit()
         return techs
     except Exception as e:
