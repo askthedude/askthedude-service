@@ -5,19 +5,19 @@ from web.dto.dto import ProjectFilter, storage, PostProject, \
 from storage.database import new_session
 
 
-async def add_new_project(project: PostProject) -> Optional[GetProject]:
+async def add_new_project(project: PostProject, user_id: int) -> Optional[GetProject]:
     session = new_session()
     try:
         proj = storage.add_project_entity(project, session)
         await session.flush()
         res = await storage.find_user_project_assoc_type_with_title("ADMIN", session)
-        storage.add_project_user_relation(proj.id, project.user_id, res[0], session)
+        storage.add_project_user_relation(proj.id, user_id, res[0], session)
         for tech_id in project.technology_ids:
             storage.add_project_technology_relation(proj.id, tech_id, session)
         storage.add_blank_project_frequency_entity(proj.id, session)
         await session.commit()
         res = GetProject(id=proj.id, title=proj.title, description=proj.description, start_date=proj.start_date,
-                          stars=proj.stars, github_url=proj.url, url=proj.url, is_active=proj.is_active, user_id=project.user_id,
+                          stars=proj.stars, github_url=proj.url, url=proj.url, is_active=proj.is_active, user_id=user_id,
                          technology_ids=project.technology_ids)
         return res
     except Exception as e:

@@ -7,8 +7,8 @@ from service.domain.domain import PartialProjectData, TechnologyData, \
 import storage.facade.project_storage_facade as project_facade
 
 
-async def add_new_project(project: PostProject) -> Optional[GetProject]:
-    result = await project_facade.add_new_project(project)
+async def add_new_project(project: PostProject, user_id: int) -> Optional[GetProject]:
+    result = await project_facade.add_new_project(project, user_id)
     return result
 
 

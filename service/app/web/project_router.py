@@ -1,19 +1,25 @@
 from fastapi import APIRouter, HTTPException
+from starlette.requests import Request
 
 from web.dto.dto import PostProject, PostTechnology, ProjectFilter, PostStatistics
 from service.project_service import add_new_project, add_new_technology, \
     search_projects, get_project_by_id, post_project_statistics
+from web.helper.auth_helper import check_user_auth
 
 router = APIRouter()
 
 
 @router.post("/project/")
-async def add_project(project: PostProject):
-    new_proj = await add_new_project(project)
-    if new_proj is None:
-        raise HTTPException(status_code=409, detail="Couldn't add input project.")
+async def add_project(project: PostProject, request: Request):
+    user_id = check_user_auth(request)
+    if user_id is not None:
+        new_proj = await add_new_project(project, user_id)
+        if new_proj is None:
+            raise HTTPException(status_code=409, detail="Couldn't add input project.")
+        else:
+            return new_proj
     else:
-        return new_proj
+        raise HTTPException(status_code=403, detail="Couldn't authorize for project addition.")
 
 
 @router.post("/technology/")
@@ -41,7 +47,7 @@ async def filter_query_projects(id: int):
 
 
 @router.post("/project/{id}/stats")
-async def filter_query_projects(id: int, stats: PostStatistics):
+async def update_project_statistics(id: int, stats: PostStatistics):
     res = await post_project_statistics(id, stats)
     if res is None:
         raise HTTPException(status_code=409, detail="Couldn't Update project statistics.")

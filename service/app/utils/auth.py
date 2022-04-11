@@ -1,7 +1,13 @@
 import bcrypt as bcrypt
+import time
+from typing import Dict
+import jwt
+
+from dependencies.config import settings
 
 
 HASH_SALT_CONSTANT=10
+JWT_TIMEOUT = 10000
 
 
 def get_hashed_password(plain_text_password):
@@ -22,3 +28,24 @@ def check_password(plain_text_password, hashed_password):
     except Exception as e:
         print(e)
         return False
+
+
+def signJWT(user_id: str) -> Dict[str, str]:
+    payload = {
+        "user_id": user_id,
+        "expires": time.time() + JWT_TIMEOUT
+    }
+    try:
+        return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+    except Exception as e:
+        print(e)
+        return {}
+
+
+def decodeJWT(token: str) -> dict:
+    try:
+        decoded_token = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+        return decoded_token if decoded_token["expires"] >= time.time() else None
+    except Exception as e:
+        print(e)
+        return {}

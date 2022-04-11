@@ -1,15 +1,9 @@
-import time
-from typing import Dict
-import jwt
 import re
-
-from dependencies.config import settings
 from utils.auth import get_hashed_password, check_password
 from web.dto.dto import PostUser, SignInUser
+
 import storage.facade.user_storage_facade as user_facade
-
-
-JWT_TIMEOUT = 100
+from utils.auth import signJWT
 
 
 regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
@@ -39,22 +33,3 @@ async def sign_in_user(user: SignInUser):
         return None
 
 
-def signJWT(user_id: str) -> Dict[str, str]:
-    payload = {
-        "user_id": user_id,
-        "expires": time.time() + JWT_TIMEOUT
-    }
-    try:
-        return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
-    except Exception as e:
-        print(e)
-        return {}
-
-
-def decodeJWT(token: str) -> dict:
-    try:
-        decoded_token = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
-        return decoded_token if decoded_token["expires"] >= time.time() else None
-    except Exception as e:
-        print(e)
-        return {}
