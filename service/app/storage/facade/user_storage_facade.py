@@ -10,6 +10,9 @@ async def add_new_user(user: PostUser):
         if is_present:
             return None
         res = storage.add_user_entity(user, session)
+        await session.flush()
+        role = await storage.get_role_entity_with_title("USER", session)
+        storage.add_user_role_entity(res.id, role.Role.id, session)
         await session.commit()
         await session.refresh(res)
         return GetUser(id=res.id, username=res.username, name=res.name, email=res.email, is_active=res.is_active,

@@ -83,6 +83,12 @@ class Storage():
         res = await session.execute(q)
         return res.all()
 
+    async def get_role_entity_with_title(self, title: str, session: AsyncSession):
+        q = select(Role)\
+            .filter(Role.title == title)
+        res = await session.execute(q)
+        return res.first()
+
     async def filter_projects(self, project_filter, session: AsyncSession):
         q = select(Project) \
             .options(subqueryload(Project.technologies).subqueryload(ProjectTechnologyAssociation.technology)) \

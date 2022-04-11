@@ -16,7 +16,7 @@ async def add_new_user(user: PostUser):
             return None
         user.password = hashed_psswd
         result = await user_facade.add_new_user(user)
-        return {"token": signJWT(result.User.id)}
+        return {"token": signJWT(result.id)}
     else:
         print("Email not valid")
         return None
