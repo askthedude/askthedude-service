@@ -45,6 +45,8 @@ async def get_project_by_id(id: int):
 
 
 async def post_project_statistics(id:int, stats: PostStatistics):
+    if stats.delta_subscriptions < 0 or stats.delta_seen_frequency < 0 or stats.delta_number_of_interested < 0:
+        return None
     new_projects_stats = await project_facade.update_project_stats(id, stats)
     sample_stats = new_projects_stats.ProjectStatistics
     res = StatisticsData(sample_stats.id, sample_stats.number_of_interested, sample_stats.subscriptions, sample_stats.seen_frequency)
