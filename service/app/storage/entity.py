@@ -9,12 +9,13 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False)
     github_url = Column(String, nullable=False)
     linkedin_url = Column(String, nullable=False)
-    oauth = Column(String)
+    oauth = Column(String, nullable=True)
 
     projects = relationship('UserProjectAssociation', back_populates='user')
     roles = relationship('UserRoleAssociation', back_populates="user")

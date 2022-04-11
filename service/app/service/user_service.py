@@ -1,14 +1,8 @@
-from typing import Optional
 from web.dto.dto import UserFilter
-from web.dto.dto import PostUser, GetUser, PostRole
-from service.domain.domain import UserData, CompleteUserData, PartialProjectData
+from web.dto.dto import PostRole
+from service.domain.domain import CompleteUserData, PartialProjectData
 
 import storage.facade.user_storage_facade as user_facade
-
-
-async def add_new_user(user: PostUser):
-    result = await user_facade.add_new_user(user)
-    return result
 
 
 async def get_user_profile_with_id(id: int):

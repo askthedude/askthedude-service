@@ -1,5 +1,5 @@
-from web.dto.dto import PostUser, PostRole, UserFilter
-from service.user_service import add_new_user, \
+from web.dto.dto import PostRole, UserFilter
+from service.user_service import  \
     get_user_profile_with_id, add_role, filter_all_users
 
 from fastapi import APIRouter, HTTPException
@@ -25,18 +25,9 @@ async def get_user_profile(id: int):
 
 
 @router.post("/role/")
-async def add_user(role: PostRole):
+async def add_user_role(role: PostRole):
     new_role = await add_role(role)
     if new_role is None:
         raise HTTPException(status_code=409, detail="Couldn't add input role.")
     else:
         return new_role
-
-
-@router.post("/user/")
-async def add_user(user: PostUser):
-    new_user = await add_new_user(user)
-    if new_user is None:
-        raise HTTPException(status_code=409, detail="Couldn't add input user.")
-    else:
-        return new_user

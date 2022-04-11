@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import subqueryload
 
@@ -19,14 +19,20 @@ class Storage():
         res = await session.execute(q)
         return res.first()
 
-    async def get_uset_with_email(self, email: str, session: AsyncSession) -> Optional[User]:
-        q = select(User).filter(User.email == email)
+    async def get_uset_with_email(self, email: str, username: str, session: AsyncSession) -> Optional[User]:
+        q = select(User).filter(User.email == email or User.username == username)
+        res = await session.execute(q)
+        return res.first()
+
+    async def get_uset_with_username(self, username: str, session: AsyncSession) -> Optional[User]:
+        q = select(User).filter(User.username == username)
         res = await session.execute(q)
         return res.first()
 
     def add_user_entity(self, user, session: AsyncSession) -> User:
-        new_user = User(username=user.username, name=user.name,  email=user.email, github_url = user.github_url,
-                        linkedin_url=user.linkedin_url, oauth=user.oauth_token)
+        new_user = User(username=user.username, name=user.name, hashed_password=user.password,
+                        email=user.email, github_url = user.github_url,
+                        linkedin_url=user.linkedin_url)
         session.add(new_user)
         return new_user
 

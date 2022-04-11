@@ -16,9 +16,8 @@ class Settings(BaseSettings):
     DATABASE_PASSWORD: str = ""
     development_mode: bool = False
     drop_recreate_tables: bool = False
-    client_id: Optional[str] = "" #todo
-    client_secret: Optional[str] = "" #todo
-
+    JWT_SECRET: str
+    JWT_ALGORITHM: str
     class Config:
         env_file = os.path.join(os.path.dirname(__file__),'..',CONFIG_FOLDER_NAME,CONFIG_FILE_NAME)
 

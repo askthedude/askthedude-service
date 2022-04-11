@@ -21,11 +21,14 @@ class GetUser(BaseModel):
 class PostUser(BaseModel):
     name: str
     username: str
+    password: str
     email: str
-    github_url: str
+    github_url: Optional[str]
     linkedin_url: Optional[str]
-    oauth_token: str
-    role_ids: List[int]
+
+class SignInUser(BaseModel):
+    username: str
+    password: str
 
 
 class PostProject(BaseModel):
@@ -100,3 +103,4 @@ class PostStatistics(BaseModel):
     delta_seen_frequency: Optional[int] = 0
     delta_number_of_interested: Optional[int] = 0
     delta_subscriptions: Optional[int] = 0
+
