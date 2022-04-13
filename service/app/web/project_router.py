@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from starlette.requests import Request
 
-from web.dto.dto import PostProject, PostTechnology, ProjectFilter, PostStatistics
-from service.project_service import add_new_project, add_new_technology, \
+from web.dto.dto import PostProject, ProjectFilter, PostStatistics
+from service.project_service import add_new_project, \
     search_projects, get_project_by_id, post_project_statistics
 from web.helper.auth_helper import check_user_auth
 
@@ -20,15 +20,6 @@ async def add_project(project: PostProject, request: Request):
             return new_proj
     else:
         raise HTTPException(status_code=403, detail="Couldn't authorize for project addition.")
-
-
-@router.post("/technology/")
-async def add_technology(technology: PostTechnology):
-    new_tech = await add_new_technology(technology)
-    if new_tech is None:
-        raise HTTPException(status_code=409, detail="Couldn't add input technology.")
-    else:
-        return new_tech
 
 
 @router.post("/project/filter")

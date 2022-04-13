@@ -12,16 +12,6 @@ async def add_new_project(project: PostProject, user_id: int) -> Optional[GetPro
     return result
 
 
-async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
-   result = await project_facade.add_new_technology(technology)
-   return result
-
-
-async def get_all_technologies() -> List[GetTechnology]:
-    result = await project_facade.get_all_technologies()
-    return result
-
-
 async def search_projects(project_filter: ProjectFilter) -> List[PartialProjectData]:
     projects = await project_facade.filter_projects(project_filter)
     result = []

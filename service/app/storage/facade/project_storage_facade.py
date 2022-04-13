@@ -1,7 +1,7 @@
 from typing import Optional, List
 
 from web.dto.dto import ProjectFilter, storage, PostProject, \
-    GetProject, PostTechnology, GetTechnology, PostStatistics
+    GetProject, PostTechnology, GetTechnology, PostStatistics, TechnologyFilter
 from storage.database import new_session
 
 
@@ -67,10 +67,10 @@ async def get_project_by_id(id: int):
         await session.close()
 
 
-async def get_all_technologies() -> List[GetTechnology]:
+async def filter_technologies(tech_filter: TechnologyFilter):
     session = new_session()
     try:
-        techs = await storage.get_all_technologies(session)
+        techs = await storage.filter_technologies(tech_filter.title, session)
         return techs
     except Exception as e:
         print(e)

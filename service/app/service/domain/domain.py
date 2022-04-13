@@ -5,7 +5,7 @@ from typing import List
 @dataclass
 class TechnologyData:
     id: int
-    title: str
+    name: str
     is_hot: bool
     resource_url: str
 

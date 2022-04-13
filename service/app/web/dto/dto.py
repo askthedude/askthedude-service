@@ -69,6 +69,7 @@ class GetTechnology(BaseModel):
     id: int
     name: str
     resource_url: str
+    is_hot: bool
 
 
 LIMIT_CONSTANT = 10
@@ -110,4 +111,8 @@ class PostStatistics(BaseModel):
     delta_seen_frequency: Optional[int] = 0
     delta_number_of_interested: Optional[int] = 0
     delta_subscriptions: Optional[int] = 0
+
+
+class TechnologyFilter(BaseModel):
+    title: Optional[str] = ""
 

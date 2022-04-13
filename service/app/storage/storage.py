@@ -78,8 +78,9 @@ class Storage():
         res = await session.execute(q)
         return res.all()
 
-    async def get_all_technologies(self, session: AsyncSession):
-        q = select(Technology)
+    async def filter_technologies(self, tech_title_filter: str, session: AsyncSession):
+        q = select(Technology)\
+            .filter(Technology.name.like('%'+tech_title_filter+'%'))
         res = await session.execute(q)
         return res.all()
 
