@@ -93,6 +93,8 @@ class Storage():
     async def filter_projects(self, project_filter, session: AsyncSession):
         print(project_filter)
         q = select(Project) \
+            .join(Project.technologies).join(ProjectTechnologyAssociation.technology) \
+            .join(Project.users).join(UserProjectAssociation.user).join(UserProjectAssociation.type) \
             .options(contains_eager(Project.technologies).contains_eager(ProjectTechnologyAssociation.technology)) \
             .options(contains_eager(Project.users).contains_eager(UserProjectAssociation.user))\
             .options(contains_eager(Project.users).contains_eager(UserProjectAssociation.type))\
