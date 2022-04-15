@@ -25,6 +25,7 @@ async def add_project(project: PostProject, request: Request):
 @router.post("/project/filter")
 async def filter_query_projects(project_filter: ProjectFilter):
     res = await search_projects(project_filter)
+    print(res)
     return res
 
 

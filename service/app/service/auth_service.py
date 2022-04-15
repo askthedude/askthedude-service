@@ -1,6 +1,6 @@
 import re
 from utils.auth import get_hashed_password, check_password
-from web.dto.dto import PostUser, SignInUser, GetUserWithoutId
+from web.dto.dto import PostUser, SignInUser, GetUser
 
 import storage.facade.user_storage_facade as user_facade
 from utils.auth import signJWT
@@ -29,7 +29,7 @@ async def sign_in_user(user: SignInUser):
     if res:
         res = res.User
         if check_password(user.password, res.hashed_password):
-            user_data = GetUserWithoutId(username=res.username, name=res.name, email=res.email, is_active=res.is_active,
+            user_data = GetUser(id=res.id, username=res.username, name=res.name, email=res.email, is_active=res.is_active,
                        github_url=res.github_url, linkedin_url=res.linkedin_url)
             return { "token": signJWT(res.id), "user": user_data}
         else:
