@@ -13,13 +13,9 @@ async def add_new_project(project: PostProject, user_id: int) -> Optional[GetPro
 
 
 async def search_projects(project_filter: ProjectFilter) -> List[PartialProjectData]:
-    projects = await project_facade.filter_projects(project_filter)
     result = []
+    projects = await project_facade.filter_projects(project_filter)
     for project in projects:
-        # this filtering functionality should be implemented in storage layer
-        if project_filter.author_user_id != -1:
-            if project.Project.users[0].user.id != project_filter.author_user_id:
-                continue
         techs = [TechnologyData(tech.technology.id, tech.technology.name, tech.technology.is_hot, tech.technology.resource_url) for tech in project.Project.technologies]
         users = [user.user.username for user in project.Project.users]
         result.append(PartialProjectData(project.Project.title, project.Project.description, project.Project.stars, project.Project.is_active, project.Project.id, project.Project.url, project.Project.start_date, techs, users))

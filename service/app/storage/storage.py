@@ -1,8 +1,8 @@
 from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import subqueryload
+from sqlalchemy.orm import subqueryload, contains_eager
 
 from .entity import User, Project, Technology, UserProjectAssociation, \
     ProjectTechnologyAssociation, Role, UserRoleAssociation, UserProjectAssociationType, \
@@ -93,19 +93,19 @@ class Storage():
     async def filter_projects(self, project_filter, session: AsyncSession):
         print(project_filter)
         q = select(Project) \
-            .options(subqueryload(Project.technologies).subqueryload(ProjectTechnologyAssociation.technology)) \
-            .options(subqueryload(Project.users).subqueryload(UserProjectAssociation.user))\
-            .options(subqueryload(Project.users).subqueryload(UserProjectAssociation.type))\
-            .filter(Project.title.like('%'+project_filter.title+'%')
-                    & (Project.description.like('%'+project_filter.description+'%'))
-                    & (Project.is_active == project_filter.is_active)
-                    & (UserProjectAssociationType.title == 'ADMIN')
-                    & (UserProjectAssociation.user_id == project_filter.author_user_id if project_filter.author_user_id != -1 else True))\
-            .distinct()\
+            .options(contains_eager(Project.technologies).contains_eager(ProjectTechnologyAssociation.technology)) \
+            .options(contains_eager(Project.users).contains_eager(UserProjectAssociation.user))\
+            .options(contains_eager(Project.users).contains_eager(UserProjectAssociation.type))\
+            .filter(Project.title.like('%'+project_filter.title+'%'))\
+            .filter(Project.description.like('%'+project_filter.description+'%')) \
+            .filter(Project.is_active == project_filter.is_active) \
+            .filter(UserProjectAssociationType.title == 'ADMIN') \
+            .filter(UserProjectAssociation.user_id == project_filter.author_user_id if project_filter.author_user_id != -1 else True) \
+            .distinct(Project.id)\
             .limit(project_filter.limit) \
             .offset(project_filter.offset)
         res = await session.execute(q)
-        return res.all()
+        return res.unique().all()
 
     async def get_project_by_id(self, id: int, session: AsyncSession):
         q = select(Project) \
