@@ -4,7 +4,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession
 from dependencies.config import database_url, settings
 
-
 engine = create_async_engine(
     database_url,
     echo=True if settings.development_mode else False

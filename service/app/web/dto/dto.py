@@ -1,11 +1,7 @@
 # put here global project dependencies for indirection level between components
 from typing import Optional
-from storage.storage import Storage
 from pydantic import BaseModel
 from typing import List
-
-
-storage = Storage()
 
 
 class GetUser(BaseModel):

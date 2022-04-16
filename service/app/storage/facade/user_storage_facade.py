@@ -1,6 +1,7 @@
-from web.dto.dto import storage, UserFilter
+from web.dto.dto import UserFilter
 from web.dto.dto import PostUser, GetUser, PostRole
 from storage.database import new_session
+from storage.storage import storage
 
 
 async def add_new_user(user: PostUser):

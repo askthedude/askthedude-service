@@ -1,8 +1,9 @@
 from typing import Optional, List
 
-from web.dto.dto import ProjectFilter, storage, PostProject, \
+from web.dto.dto import ProjectFilter, PostProject, \
     GetProject, PostTechnology, GetTechnology, PostStatistics, TechnologyFilter
 from storage.database import new_session
+from storage.storage import storage
 
 
 async def add_new_project(project: PostProject, user_id: int) -> Optional[GetProject]:
