@@ -1,7 +1,8 @@
 from typing import Optional, List
 
 from web.dto.dto import ProjectFilter, PostProject, \
-    GetProject, PostTechnology, GetTechnology, PostStatistics, TechnologyFilter
+    GetProject, PostTechnology, GetTechnology, PostStatistics, TechnologyFilter, \
+    ProjectSubscription
 from storage.database import new_session
 from storage.storage import storage
 
@@ -48,6 +49,21 @@ async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnolo
         await session.commit()
         await session.refresh(tech)
         return tech
+    except Exception as e:
+        await session.rollback()
+        print(e)
+        return None
+    finally:
+        await session.close()
+
+
+async def add_new_subscription_project(subscription: ProjectSubscription):
+    session = new_session()
+    try:
+        new_subscription = storage.add_subscription(subscription, session)
+        await session.commit()
+        await session.refresh(new_subscription)
+        return new_subscription
     except Exception as e:
         await session.rollback()
         print(e)

@@ -113,3 +113,12 @@ class ProjectStatistics(Base):
     subscriptions = Column(Integer, default=0)
 
     project = relationship('Project', back_populates="statistics")
+
+
+class ProjectSubscription(Base):
+    __tablename__ = 'project_subscription'
+
+    id = Column(Integer, primary_key=True)
+    project_id = Column(ForeignKey('project.id'), nullable=False)
+    active = Column(Boolean, default=True)
+    email = Column(String, nullable=False)

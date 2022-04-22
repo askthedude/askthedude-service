@@ -112,3 +112,8 @@ class PostStatistics(BaseModel):
 class TechnologyFilter(BaseModel):
     title: Optional[str] = ""
 
+
+class ProjectSubscription(BaseModel):
+    project_id: int
+    email: str
+

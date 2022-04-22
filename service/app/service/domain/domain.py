@@ -67,3 +67,8 @@ class CompleteProjectData:
     users: List[UserData]
     stats: StatisticsData
 
+
+@dataclass()
+class ProjectSubscription:
+    project_id: int
+    email: str

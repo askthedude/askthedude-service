@@ -6,7 +6,7 @@ from sqlalchemy.orm import subqueryload, contains_eager
 
 from .entity import User, Project, Technology, UserProjectAssociation, \
     ProjectTechnologyAssociation, Role, UserRoleAssociation, UserProjectAssociationType, \
-    ProjectStatistics
+    ProjectStatistics, ProjectSubscription
 
 import datetime
 
@@ -164,6 +164,11 @@ class Storage():
         project_stats.ProjectStatistics.number_of_interested += stats.delta_number_of_interested
         project_stats.ProjectStatistics.subscriptions += stats.delta_subscriptions
         return project_stats
+
+    async def add_subscription(self,  subscription, session: AsyncSession):
+        new_subscription = ProjectSubscription(project_id=subscription.project_id, email=subscription.email)
+        session.add(new_subscription)
+        return new_subscription
 
 
 # export singleton storage

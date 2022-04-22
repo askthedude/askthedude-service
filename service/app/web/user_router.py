@@ -15,6 +15,7 @@ async def filter_users(user_filter: UserFilter):
     else:
         return users
 
+
 @router.get("/user/{id}")
 async def get_user_profile(id: int):
     user = await get_user_profile_with_id(id)
