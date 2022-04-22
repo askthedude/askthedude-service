@@ -113,7 +113,7 @@ class TechnologyFilter(BaseModel):
     title: Optional[str] = ""
 
 
-class ProjectSubscription(BaseModel):
+class ProjectSubscriptionData(BaseModel):
     project_id: int
     email: str
 

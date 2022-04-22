@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from starlette.requests import Request
 
-from web.dto.dto import PostProject, ProjectFilter, PostStatistics, ProjectSubscription
+from web.dto.dto import PostProject, ProjectFilter, PostStatistics, ProjectSubscriptionData
 from service.project_service import add_new_project, \
     search_projects, get_project_by_id, post_project_statistics, add_new_subscription_for_project
 from web.helper.auth_helper import check_user_auth
@@ -29,8 +29,10 @@ async def filter_query_projects(project_filter: ProjectFilter):
 
 
 @router.post("/project/subscription")
-async def add_project_subscription(project_subscription: ProjectSubscription):
+async def add_project_subscription(project_subscription: ProjectSubscriptionData):
     res = await add_new_subscription_for_project(project_subscription)
+    if res is None:
+        raise HTTPException(status_code=409, detail="Couldn't add project subscription.")
     return res
 
 

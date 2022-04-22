@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from web.dto.dto import ProjectFilter, PostProject, \
     GetProject, PostTechnology, GetTechnology, PostStatistics, TechnologyFilter, \
-    ProjectSubscription
+    ProjectSubscriptionData
 from storage.database import new_session
 from storage.storage import storage
 
@@ -57,7 +57,7 @@ async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnolo
         await session.close()
 
 
-async def add_new_subscription_project(subscription: ProjectSubscription):
+async def add_new_subscription_project(subscription: ProjectSubscriptionData):
     session = new_session()
     try:
         new_subscription = storage.add_subscription(subscription, session)

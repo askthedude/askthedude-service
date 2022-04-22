@@ -1,6 +1,6 @@
 from typing import Optional, List
 from web.dto.dto import PostProject, \
-    GetProject, ProjectFilter, PostStatistics, ProjectSubscription
+    GetProject, ProjectFilter, PostStatistics, ProjectSubscriptionData
 from service.domain.domain import PartialProjectData, TechnologyData, \
     CompleteProjectData, StatisticsData, UserData, ProjectSubscription
 
@@ -43,9 +43,11 @@ async def post_project_statistics(id:int, stats: PostStatistics):
     return res
 
 
-async def add_new_subscription_for_project(subscription: ProjectSubscription):
+async def add_new_subscription_for_project(subscription: ProjectSubscriptionData):
     if subscription.email is None or subscription.email == "" or subscription.project_id is None:
         return None
     new_subscription = await project_facade.add_new_subscription_project(subscription)
-    result = ProjectSubscription(new_subscription.ProjectSubscription.project_id, new_subscription.ProjectSubscription.email)
+    if new_subscription is None:
+        return None
+    result = ProjectSubscriptionData(project_id=new_subscription.project_id, email=new_subscription.email)
     return result

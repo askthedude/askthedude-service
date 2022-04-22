@@ -23,9 +23,10 @@ def upgrade():
                     sa.Column('active', sa.Boolean(), nullable=False, default=True),
                     sa.Column('project_id', sa.Integer(), nullable=False),
                     sa.ForeignKeyConstraint(['project_id'], ['project.id']),
+                    sa.UniqueConstraint('project_id', 'email'),
                     sa.PrimaryKeyConstraint('id')
                     )
 
 
 def downgrade():
-    pass
+    op.drop_table('project_subscription')
