@@ -43,16 +43,19 @@ def upgrade():
     sa.UniqueConstraint('name')
     )
     op.create_index(op.f('ix_technology_id'), 'technology', ['id'], unique=False)
+
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(), nullable=False),
-    sa.Column('hashed_password', sa.String(), nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
-    sa.Column('is_active', sa.Boolean(), nullable=False),
-    sa.Column('github_url', sa.String(), nullable=False),
-    sa.Column('linkedin_url', sa.String(), nullable=False),
+    sa.Column('username', sa.String(), nullable=True),
+    sa.Column('hashed_password', sa.String(), nullable=True),
+    sa.Column('name', sa.String(), nullable=True),
+    sa.Column('email', sa.String(), nullable=True),
+    sa.Column('is_active', sa.Boolean(), nullable=False, default=True),
+    sa.Column('github_url', sa.String(), nullable=True),
+    sa.Column('linkedin_url', sa.String(), nullable=True),
     sa.Column('oauth', sa.String(), nullable=True),
+    sa.Column('identifier_token', sa.String(), nullable=True, unique=True),
+    sa.Column('anonymous', sa.Boolean(), nullable=True, default=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
     )

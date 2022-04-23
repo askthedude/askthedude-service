@@ -8,14 +8,16 @@ class User(Base):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    name = Column(String, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
+    username = Column(String, unique=True)
+    hashed_password = Column(String)
+    name = Column(String)
+    email = Column(String, unique=True, index=True)
     is_active = Column(Boolean, default=True, nullable=False)
-    github_url = Column(String, nullable=False)
-    linkedin_url = Column(String, nullable=False)
+    github_url = Column(String)
+    linkedin_url = Column(String)
     oauth = Column(String, nullable=True)
+    identifier_token = Column(String, nullable=True, unique=True)
+    anonymous = Column(Boolean, nullable=True, default=False)
 
     projects = relationship('UserProjectAssociation', back_populates='user')
     roles = relationship('UserRoleAssociation', back_populates="user")

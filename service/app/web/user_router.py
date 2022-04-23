@@ -1,6 +1,6 @@
-from web.dto.dto import PostRole, UserFilter
+from web.dto.dto import PostRole, UserFilter, AnonymousUserData
 from service.user_service import  \
-    get_user_profile_with_id, add_role, filter_all_users
+    get_user_profile_with_id, add_role, filter_all_users, add_anonymous_user
 
 from fastapi import APIRouter, HTTPException
 
@@ -32,3 +32,12 @@ async def add_user_role(role: PostRole):
         raise HTTPException(status_code=409, detail="Couldn't add input role.")
     else:
         return new_role
+
+
+@router.post("/user/anonymous")
+async def add_user_device_token(user: AnonymousUserData):
+    new_anonymous_user = await add_anonymous_user(user)
+    if new_anonymous_user is None:
+        raise HTTPException(status_code=409, detail="Couldn't add new anonymous user.")
+    else:
+        return new_anonymous_user

@@ -10,8 +10,8 @@ class GetUser(BaseModel):
     username: str
     email: str
     is_active: bool
-    github_url: str
-    linkedin_url: str
+    github_url: Optional[str]
+    linkedin_url: Optional[str]
 
 
 class GetUserWithoutId(BaseModel):
@@ -22,6 +22,7 @@ class GetUserWithoutId(BaseModel):
     github_url: str
     linkedin_url: str
 
+
 class PostUser(BaseModel):
     name: str
     username: str
@@ -29,6 +30,8 @@ class PostUser(BaseModel):
     email: str
     github_url: Optional[str]
     linkedin_url: Optional[str]
+    identifier_token: str
+
 
 class SignInUser(BaseModel):
     username: str
@@ -81,7 +84,7 @@ class ProjectFilter(BaseModel):
     stars: Optional[int] = -1
     is_active: Optional[bool] = True
     author_user_id: Optional[int] = -1
-    technology_ids: Optional[List[int]]=[]
+    technology_ids: Optional[List[int]] = []
     # below is paging functionality
     offset: Optional[int] = OFFSET_INIT_CONSTANT
     limit: Optional[int] = LIMIT_CONSTANT
@@ -117,3 +120,6 @@ class ProjectSubscriptionData(BaseModel):
     project_id: int
     email: str
 
+
+class AnonymousUserData(BaseModel):
+    identifier_token: str

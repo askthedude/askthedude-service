@@ -41,6 +41,19 @@ class Storage():
         session.add(new_user)
         return new_user
 
+    async def update_user_entity(self, user, session: AsyncSession) -> User:
+        q = select(User) \
+            .filter(User.identifier_token == user.identifier_token)
+        res = await session.execute(q)
+        user_entity = res.first()
+        user_entity.User.username=user.username
+        user_entity.User.name=user.name
+        user_entity.User.hashed_password = user.password
+        user_entity.User.email = user.email
+        user_entity.User.github_url = user.github_url
+        user_entity.User.linkedin_url = user.linkedin_url
+        return user_entity
+
     def add_project_entity(self, project, session: AsyncSession):
         new_proj = Project(title=project.title, description=project.description, start_date=project.start_date,
                            stars=project.stars, url=project.url)
@@ -100,7 +113,6 @@ class Storage():
         return res.first()
 
     async def filter_projects(self, project_filter, session: AsyncSession):
-        print(project_filter)
         q = select(Project) \
             .join(Project.technologies).join(ProjectTechnologyAssociation.technology) \
             .join(Project.users).join(UserProjectAssociation.user).join(UserProjectAssociation.type) \
@@ -169,6 +181,17 @@ class Storage():
         new_subscription = ProjectSubscription(project_id=subscription.project_id, email=subscription.email)
         session.add(new_subscription)
         return new_subscription
+
+    def add_anonymous_user(self, user, session: AsyncSession):
+        user = User(identifier_token=user.identifier_token, anonymous=True)
+        session.add(user)
+        return user
+
+    async def get_user_with_identifier_token(self, identifier_token, session: AsyncSession):
+        q = select(User)\
+                .filter(User.identifier_token == identifier_token)
+        res = await session.execute(q)
+        return res.first()
 
 
 # export singleton storage

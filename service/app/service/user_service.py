@@ -1,6 +1,5 @@
-from web.dto.dto import UserFilter
-from web.dto.dto import PostRole
-from service.domain.domain import CompleteUserData, PartialProjectData
+from web.dto.dto import UserFilter, PostRole, AnonymousUserData
+from service.domain.domain import CompleteUserData, PartialProjectData, AnonymousUser
 
 import storage.facade.user_storage_facade as user_facade
 
@@ -35,3 +34,8 @@ async def filter_all_users(user_filter: UserFilter):
         user_data = CompleteUserData(user.User.id, user.User.username, user.User.email, user.User.github_url, user.User.name, user.User.is_active, user.User.linkedin_url, proj_result)
         result.append(user_data)
     return result
+
+
+async def add_anonymous_user(user: AnonymousUserData):
+    new_user = await user_facade.add_anonymous_user(user)
+    return new_user

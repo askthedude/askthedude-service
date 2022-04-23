@@ -11,8 +11,6 @@ regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{
 
 async def add_new_user(user: PostUser):
     if re.fullmatch(regex, user.email):
-        user.github_url="" #todo: temporary/ remove constraint on table of non null
-        user.linkedin_url = "" #todo: temporary/ remove constraint on table of non null
         hashed_psswd = get_hashed_password(user.password)
         if hashed_psswd == "":
             return None

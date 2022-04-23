@@ -47,6 +47,12 @@ class CompleteUserData:
 
 
 @dataclass
+class AnonymousUser:
+    id: int
+    identifier_token: str
+
+
+@dataclass
 class StatisticsData:
     id: int
     number_of_interested: int
