@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
-from service.auth_service import add_new_user, sign_in_user
+import service.auth_service as service
+from service.exceptions.exceptions import ValidationException, CryptoException, StorageFacadeException, \
+    FailedLoginException
 from web.dto.dto import PostUser, SignInUser
 
 router = APIRouter()
@@ -8,17 +10,23 @@ router = APIRouter()
 
 @router.post("/signup/")
 async def signup(user: PostUser):
-    new_user = await add_new_user(user)
-    if new_user is None:
-        raise HTTPException(status_code=409, detail="Couldn't add input user.")
-    else:
-        return new_user
+    try:
+        return await service.add_new_user(user)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except CryptoException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
 
 
 @router.post("/signin/")
 async def signup(user: SignInUser):
-    token = await sign_in_user(user)
-    if token is None:
-        raise HTTPException(status_code=401, detail="Couldn't sign in with input credentials.")
-    else:
-        return token
+    try:
+        return await service.sign_in_user(user)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except FailedLoginException as e:
+        raise HTTPException(status_code=401, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)

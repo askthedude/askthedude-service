@@ -1,3 +1,4 @@
+from service.exceptions.exceptions import StorageFacadeException
 from web.dto.dto import UserFilter
 from web.dto.dto import PostUser, GetUser, PostRole, AnonymousUserData
 from storage.database import new_session
@@ -27,9 +28,8 @@ async def add_new_user(user: PostUser):
             return GetUser(id=res.User.id, username=res.User.username, name=res.User.name, email=res.User.email,
                            is_active=res.User.is_active, github_url=res.User.github_url, linkedin_url=res.User.linkedin_url)
     except Exception as e:
-        print(e)
         await session.rollback()
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -64,7 +64,7 @@ async def get_user_profile_with_username(username: str):
         return user
     except Exception as e:
         print(e)
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 

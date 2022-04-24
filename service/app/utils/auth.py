@@ -9,6 +9,8 @@ from dependencies.config import settings
 HASH_SALT_CONSTANT=10
 JWT_TIMEOUT = 10000
 
+HASHING_ERROR = "ERROR_HASH"
+
 
 def get_hashed_password(plain_text_password):
     try:
@@ -18,7 +20,7 @@ def get_hashed_password(plain_text_password):
         return bcrypt.hashpw(passwrd, bcrypt.gensalt(HASH_SALT_CONSTANT)).decode('utf-8')
     except Exception as e:
         print(e)
-        return ""
+        return HASHING_ERROR
 
 
 def check_password(plain_text_password, hashed_password):
