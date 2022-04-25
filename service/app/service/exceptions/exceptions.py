@@ -11,13 +11,24 @@ class CryptoException(Exception):
 
 
 class StorageFacadeException(Exception):
-    def __init__(self, message, errors="Storage facade exception"):
+    def __init__(self, message, errors="Exception while communicating with Storage."):
         super().__init__(message)
         self.errors = errors
 
 
 class FailedLoginException(Exception):
-    def __init__(self, message, errors="Username or password incorrect"):
+    def __init__(self, message, errors="Login credentials: Username or password is incorrect"):
         super().__init__(message)
         self.errors = errors
 
+
+class NotAuthorizedException(Exception):
+    def __init__(self, message, errors="Couldn't authorize user of the request."):
+        super().__init__(message)
+        self.errors = errors
+
+
+class ResourceNotFoundException(Exception):
+    def __init__(self, message, errors="Couldn't find requested resource"):
+        super().__init__(message)
+        self.errors = errors

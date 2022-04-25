@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from starlette.requests import Request
 
+from service.exceptions.exceptions import ValidationException, NotAuthorizedException, StorageFacadeException, \
+    ResourceNotFoundException
 from web.dto.dto import PostProject, ProjectFilter, PostStatistics, ProjectSubscriptionData
 from service.project_service import add_new_project, \
     search_projects, get_project_by_id, post_project_statistics, add_new_subscription_for_project
@@ -11,44 +13,50 @@ router = APIRouter()
 
 @router.post("/project/")
 async def add_project(project: PostProject, request: Request):
-    user_id = check_user_auth(request)
-    if user_id is not None:
-        new_proj = await add_new_project(project, user_id)
-        if new_proj is None:
-            raise HTTPException(status_code=409, detail="Couldn't add input project.")
-        else:
-            return new_proj
-    else:
-        raise HTTPException(status_code=403, detail="Couldn't authorize for project addition.")
+    try:
+        user_id = check_user_auth(request)
+        return await add_new_project(project, user_id)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except NotAuthorizedException as e:
+        raise HTTPException(status_code=401, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
 
 
 @router.post("/project/filter")
 async def filter_query_projects(project_filter: ProjectFilter):
-    res = await search_projects(project_filter)
-    return res
+    try:
+        return await search_projects(project_filter)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
 
 
 @router.post("/project/subscription")
 async def add_project_subscription(project_subscription: ProjectSubscriptionData):
-    res = await add_new_subscription_for_project(project_subscription)
-    if res is None:
-        raise HTTPException(status_code=409, detail="Couldn't add project subscription.")
-    return res
+    try:
+        return await add_new_subscription_for_project(project_subscription)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
 
 
 @router.get("/project/{id}")
 async def filter_query_projects(id: int):
-    res = await get_project_by_id(id)
-    if res is None:
-        raise HTTPException(status_code=404, detail="Couldn't find project with specified id.")
-    else:
-        return res
+    try:
+        return await get_project_by_id(id)
+    except ResourceNotFoundException as e:
+        raise HTTPException(status_code=404, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
 
 
 @router.post("/project/{id}/stats")
 async def update_project_statistics(id: int, stats: PostStatistics):
-    res = await post_project_statistics(id, stats)
-    if res is None:
-        raise HTTPException(status_code=409, detail="Couldn't Update project statistics.")
-    else:
-        return res
+    try:
+        return await post_project_statistics(id, stats)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)

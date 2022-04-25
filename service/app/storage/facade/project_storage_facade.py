@@ -1,4 +1,5 @@
-from typing import Optional, List
+from typing import Optional
+from service.exceptions.exceptions import StorageFacadeException
 
 from web.dto.dto import ProjectFilter, PostProject, \
     GetProject, PostTechnology, GetTechnology, PostStatistics, TechnologyFilter, \
@@ -25,7 +26,7 @@ async def add_new_project(project: PostProject, user_id: int) -> Optional[GetPro
     except Exception as e:
         print(e)
         await session.rollback()
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -37,7 +38,7 @@ async def filter_projects(project_filter: ProjectFilter):
         return projects
     except Exception as e:
         print(e)
-        return []
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -67,7 +68,7 @@ async def add_new_subscription_project(subscription: ProjectSubscriptionData):
     except Exception as e:
         await session.rollback()
         print(e)
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -79,7 +80,7 @@ async def get_project_by_id(id: int):
         return res
     except Exception as e:
         print(e)
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -91,7 +92,7 @@ async def filter_technologies(tech_filter: TechnologyFilter):
         return techs
     except Exception as e:
         print(e)
-        return []
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -105,6 +106,6 @@ async def update_project_stats(id: int, stats: PostStatistics):
     except Exception as e:
         await session.rollback()
         print(e)
-        return []
+        raise StorageFacadeException(e)
     finally:
         await session.close()
