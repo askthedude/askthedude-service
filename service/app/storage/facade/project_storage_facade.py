@@ -53,7 +53,7 @@ async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnolo
     except Exception as e:
         await session.rollback()
         print(e)
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 

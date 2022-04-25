@@ -2,7 +2,7 @@ from typing import List
 
 from storage.facade.project_storage_facade import filter_technologies, get_project_by_id
 from web.dto.dto import PostUser, SignInUser, PostProject, TechnologyFilter, ProjectSubscriptionData, \
-    PostStatistics, PostRole, AnonymousUserData
+    PostStatistics, PostRole, AnonymousUserData, PostTechnology
 from dataclasses import dataclass, field
 import re
 
@@ -26,7 +26,9 @@ VALIDATION_ERROR_MESSAGES = {
     "seen_frequency": "Number of seen frequency change is not valid",
     "interested_num": "Number of interested people in project not valid",
     "role": "Role title not specified",
-    "identifier_token": "identifier_token for anonymous user not present."
+    "identifier_token": "identifier_token for anonymous user not present.",
+    "technology_name": "Technology name is missing",
+    "technology_url": "Technology url is missing"
 }
 
 PASSWORD_MIN_LENGTH = 5
@@ -150,4 +152,15 @@ def validate_anonymous_user(user: AnonymousUserData) -> ValidationResult:
     if user.identifier_token is None or user.identifier_token == "":
         result.valid = False
         result.validationMessages.append(VALIDATION_ERROR_MESSAGES["identifier_token"])
+    return result
+
+
+def validate_new_technology(technology: PostTechnology):
+    result = ValidationResult()
+    if technology.name is None or technology.name == "":
+        result.valid = False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["technology_name"])
+    if technology.resource_url is None or technology.resource_url == "":
+        result.valid = False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["technology_url"])
     return result
