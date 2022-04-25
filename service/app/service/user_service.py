@@ -1,3 +1,5 @@
+from service.exceptions.exceptions import ResourceNotFoundException, ValidationException
+from service.validation.validation import validate_new_role, ValidationResult, validate_anonymous_user
 from web.dto.dto import UserFilter, PostRole, AnonymousUserData
 from service.domain.domain import CompleteUserData, PartialProjectData, AnonymousUser
 
@@ -6,6 +8,8 @@ import storage.facade.user_storage_facade as user_facade
 
 async def get_user_profile_with_id(id: int):
     user = await user_facade.get_user_profile_with_id(id)
+    if user is None:
+        raise ResourceNotFoundException(f"Couldn't find user with specified id of: {id}")
     proj_result = []
     for proj in user.User.projects:
         temp_proj = PartialProjectData(proj.project.title, proj.project.description, proj.project.stars,
@@ -18,8 +22,11 @@ async def get_user_profile_with_id(id: int):
 
 
 async def add_role(new_role: PostRole):
-    result = await user_facade.add_role(new_role)
-    return result
+    validation_res :ValidationResult = validate_new_role(new_role)
+    if validation_res.valid:
+        return await user_facade.add_role(new_role)
+    else:
+        raise ValidationException("New input Role is not valid", validation_res.validationMessages)
 
 
 async def filter_all_users(user_filter: UserFilter):
@@ -37,5 +44,8 @@ async def filter_all_users(user_filter: UserFilter):
 
 
 async def add_anonymous_user(user: AnonymousUserData):
-    new_user = await user_facade.add_anonymous_user(user)
-    return new_user
+    validation_res: ValidationResult = validate_anonymous_user(user)
+    if validation_res.valid:
+        return await user_facade.add_anonymous_user(user)
+    else:
+        raise ValidationException("Anonymous user data not valid", validation_res.validationMessages)

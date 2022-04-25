@@ -1,3 +1,5 @@
+from service.exceptions.exceptions import ResourceNotFoundException, StorageFacadeException, ResourceConflictException, \
+    ValidationException
 from web.dto.dto import PostRole, UserFilter, AnonymousUserData
 from service.user_service import  \
     get_user_profile_with_id, add_role, filter_all_users, add_anonymous_user
@@ -9,35 +11,39 @@ router = APIRouter()
 
 @router.get("/user/")
 async def filter_users(user_filter: UserFilter):
-    users = await filter_all_users(user_filter)
-    if users is None:
-        raise HTTPException(status_code=404, detail="Users with applied filter not found")
-    else:
-        return users
+    try:
+        return await filter_all_users(user_filter)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
 
 
 @router.get("/user/{id}")
 async def get_user_profile(id: int):
-    user = await get_user_profile_with_id(id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    else:
-        return user
+    try:
+        return await get_user_profile_with_id(id)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
+    except ResourceNotFoundException as e:
+        raise HTTPException(status_code=404, detail=e.errors)
 
 
 @router.post("/role/")
 async def add_user_role(role: PostRole):
-    new_role = await add_role(role)
-    if new_role is None:
-        raise HTTPException(status_code=409, detail="Couldn't add input role.")
-    else:
-        return new_role
+    try:
+        return await add_role(role)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
+    except ResourceConflictException as e:
+        raise HTTPException(status_code=409, detail=e.errors)
 
 
 @router.post("/user/anonymous")
 async def add_user_device_token(user: AnonymousUserData):
-    new_anonymous_user = await add_anonymous_user(user)
-    if new_anonymous_user is None:
-        raise HTTPException(status_code=409, detail="Couldn't add new anonymous user.")
-    else:
-        return new_anonymous_user
+    try:
+        return await add_anonymous_user(user)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)

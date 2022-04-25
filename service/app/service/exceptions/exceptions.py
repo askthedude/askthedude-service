@@ -23,12 +23,18 @@ class FailedLoginException(Exception):
 
 
 class NotAuthorizedException(Exception):
-    def __init__(self, message, errors="Couldn't authorize user of the request."):
+    def __init__(self, message, errors="Couldn't authorize user of the request"):
         super().__init__(message)
         self.errors = errors
 
 
 class ResourceNotFoundException(Exception):
     def __init__(self, message, errors="Couldn't find requested resource"):
+        super().__init__(message)
+        self.errors = errors
+
+
+class ResourceConflictException(Exception):
+    def __init__(self, message, errors="Resource like new input already present"):
         super().__init__(message)
         self.errors = errors

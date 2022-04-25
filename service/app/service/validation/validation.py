@@ -1,8 +1,8 @@
 from typing import List
 
 from storage.facade.project_storage_facade import filter_technologies, get_project_by_id
-from web.dto.dto import PostUser, SignInUser, PostProject, ProjectFilter, TechnologyFilter, ProjectSubscriptionData, \
-    PostStatistics
+from web.dto.dto import PostUser, SignInUser, PostProject, TechnologyFilter, ProjectSubscriptionData, \
+    PostStatistics, PostRole, AnonymousUserData
 from dataclasses import dataclass, field
 import re
 
@@ -24,7 +24,9 @@ VALIDATION_ERROR_MESSAGES = {
     "project_missing": "Project id is missing from the subscription",
     "subscriptions": "Number of subscription change is not valid",
     "seen_frequency": "Number of seen frequency change is not valid",
-    "interested_num": "Number of interested people in project not valid"
+    "interested_num": "Number of interested people in project not valid",
+    "role": "Role title not specified",
+    "identifier_token": "identifier_token for anonymous user not present."
 }
 
 PASSWORD_MIN_LENGTH = 5
@@ -132,4 +134,20 @@ def validate_project_statistics(stats: PostStatistics) -> ValidationResult:
     if stats.delta_number_of_interested is not None and stats.delta_number_of_interested < 0:
         result.valid = False
         result.validationMessages.append(VALIDATION_ERROR_MESSAGES["interested_num"])
+    return result
+
+
+def validate_new_role(role: PostRole) -> ValidationResult:
+    result = ValidationResult()
+    if role.title is None or role.title == "":
+        result.valid = False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["role"])
+    return result
+
+
+def validate_anonymous_user(user: AnonymousUserData) -> ValidationResult:
+    result = ValidationResult()
+    if user.identifier_token is None or user.identifier_token == "":
+        result.valid = False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["identifier_token"])
     return result

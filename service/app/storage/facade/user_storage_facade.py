@@ -1,4 +1,4 @@
-from service.exceptions.exceptions import StorageFacadeException
+from service.exceptions.exceptions import StorageFacadeException, ResourceConflictException
 from web.dto.dto import UserFilter
 from web.dto.dto import PostUser, GetUser, PostRole, AnonymousUserData
 from storage.database import new_session
@@ -52,7 +52,7 @@ async def get_user_profile_with_id(id: int):
         return user
     except Exception as e:
         print(e)
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -69,7 +69,6 @@ async def get_user_profile_with_username(username: str):
         await session.close()
 
 
-
 async def add_role(new_role: PostRole):
     session = new_session()
     try:
@@ -80,11 +79,11 @@ async def add_role(new_role: PostRole):
             await session.refresh(res)
             return res
         else:
-            return None
+            raise ResourceConflictException(f"role with title: {new_role.title} is already present")
     except Exception as e:
         print(e)
         await session.rollback()
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -96,7 +95,7 @@ async def filter_all_users(user_filter: UserFilter):
         return res
     except Exception as e:
         print(e)
-        return []
+        raise StorageFacadeException(e)
     finally:
         await session.close()
 
@@ -115,6 +114,6 @@ async def add_anonymous_user(user: AnonymousUserData):
     except Exception as e:
         print(e)
         await session.rollback()
-        return None
+        raise StorageFacadeException(e)
     finally:
         await session.close()
