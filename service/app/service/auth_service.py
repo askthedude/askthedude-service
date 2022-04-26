@@ -9,7 +9,6 @@ from utils.auth import signJWT
 
 async def add_new_user(user: PostUser):
     validation_result: ValidationResult = validate_add_user(user)
-    print(validation_result)
     if validation_result.valid:
         hashed_psswd = get_hashed_password(user.password)
         if hashed_psswd == HASHING_ERROR:
