@@ -127,4 +127,4 @@ class AnonymousUserData(BaseModel):
 
 class UserTechnologyInterestData(BaseModel):
     user_identifier_token: str
-    technology_id: int
+    technology_ids: List[int]

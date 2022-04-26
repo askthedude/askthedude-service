@@ -151,7 +151,7 @@ async def validate_user_technology_interest(userTechnology: UserTechnologyIntere
     if search_res is None:
         result.valid = False
         result.validationMessages.append(VALIDATION_ERROR_MESSAGES["identifier_token_user_missing"])
-    if userTechnology.technology_id is None or userTechnology.technology_id < 0:
+    if userTechnology.technology_ids is None or len(userTechnology.technology_ids) == 0:
         result.valid = False
         result.validationMessages.append(VALIDATION_ERROR_MESSAGES["technologies"])
     return result
