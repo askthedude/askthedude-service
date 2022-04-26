@@ -74,7 +74,13 @@ class CompleteProjectData:
     stats: StatisticsData
 
 
-@dataclass()
+@dataclass
 class ProjectSubscription:
     project_id: int
     email: str
+
+
+@dataclass
+class UserTechnologyInterest:
+    technology_id: int
+    user_id: int

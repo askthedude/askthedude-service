@@ -6,7 +6,7 @@ from sqlalchemy.orm import subqueryload, contains_eager
 
 from .entity import User, Project, Technology, UserProjectAssociation, \
     ProjectTechnologyAssociation, Role, UserRoleAssociation, UserProjectAssociationType, \
-    ProjectStatistics, ProjectSubscription
+    ProjectStatistics, ProjectSubscription, UserTechnologyInterest
 
 import datetime
 
@@ -193,6 +193,10 @@ class Storage():
         res = await session.execute(q)
         return res.first()
 
+    def add_user_technology_interest(self, user_technology, session: AsyncSession):
+        user_tech = UserTechnologyInterest(user_id=user_technology.user_id, technology_id=user_technology.technology_id)
+        session.add(user_tech)
+        return user_tech
 
 # export singleton storage
 storage = Storage()

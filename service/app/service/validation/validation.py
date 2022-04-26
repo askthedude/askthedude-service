@@ -2,8 +2,10 @@ from typing import List
 
 from service.validation.utils import VALIDATION_ERROR_MESSAGES, regex, PASSWORD_MIN_LENGTH
 from storage.facade.project_storage_facade import filter_technologies, get_project_by_id
+from storage.facade.user_storage_facade import get_user_with_identifier_token
+from storage.storage import storage
 from web.dto.dto import PostUser, SignInUser, PostProject, TechnologyFilter, ProjectSubscriptionData, \
-    PostStatistics, PostRole, AnonymousUserData, PostTechnology
+    PostStatistics, PostRole, AnonymousUserData, PostTechnology, UserTechnologyInterestData
 from dataclasses import dataclass, field
 import re
 
@@ -137,4 +139,19 @@ def validate_new_technology(technology: PostTechnology):
     if technology.resource_url is None or technology.resource_url == "":
         result.valid = False
         result.validationMessages.append(VALIDATION_ERROR_MESSAGES["technology_url"])
+    return result
+
+
+async def validate_user_technology_interest(userTechnology: UserTechnologyInterestData) -> ValidationResult:
+    result = ValidationResult()
+    if userTechnology.user_identifier_token is None or userTechnology.user_identifier_token == "":
+        result.valid = False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["identifier_token"])
+    search_res = await get_user_with_identifier_token(userTechnology.user_identifier_token)
+    if search_res is None:
+        result.valid = False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["identifier_token_user_missing"])
+    if userTechnology.technology_id is None or userTechnology.technology_id < 0:
+        result.valid = False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["technologies"])
     return result

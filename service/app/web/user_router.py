@@ -1,8 +1,7 @@
 from service.exceptions.exceptions import ResourceNotFoundException, StorageFacadeException, ResourceConflictException, \
     ValidationException
-from web.dto.dto import PostRole, UserFilter, AnonymousUserData
-from service.user_service import  \
-    get_user_profile_with_id, add_role, filter_all_users, add_anonymous_user
+from web.dto.dto import PostRole, UserFilter, AnonymousUserData, UserTechnologyInterestData
+import service.user_service as service
 
 from fastapi import APIRouter, HTTPException
 
@@ -12,7 +11,7 @@ router = APIRouter()
 @router.get("/user/")
 async def filter_users(user_filter: UserFilter):
     try:
-        return await filter_all_users(user_filter)
+        return await service.filter_all_users(user_filter)
     except StorageFacadeException as e:
         raise HTTPException(status_code=503, detail=e.errors)
 
@@ -20,7 +19,7 @@ async def filter_users(user_filter: UserFilter):
 @router.get("/user/{id}")
 async def get_user_profile(id: int):
     try:
-        return await get_user_profile_with_id(id)
+        return await service.get_user_profile_with_id(id)
     except StorageFacadeException as e:
         raise HTTPException(status_code=503, detail=e.errors)
     except ResourceNotFoundException as e:
@@ -30,7 +29,7 @@ async def get_user_profile(id: int):
 @router.post("/role/")
 async def add_user_role(role: PostRole):
     try:
-        return await add_role(role)
+        return await service.add_role(role)
     except ValidationException as e:
         raise HTTPException(status_code=400, detail=e.errors)
     except StorageFacadeException as e:
@@ -42,7 +41,17 @@ async def add_user_role(role: PostRole):
 @router.post("/user/anonymous")
 async def add_user_device_token(user: AnonymousUserData):
     try:
-        return await add_anonymous_user(user)
+        return await service.add_anonymous_user(user)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
+
+
+@router.post("/user/technology")
+async def add_user_technology_interest(user_technology_data: UserTechnologyInterestData):
+    try:
+        return await service.add_user_technology_interest(user_technology_data)
     except ValidationException as e:
         raise HTTPException(status_code=400, detail=e.errors)
     except StorageFacadeException as e:

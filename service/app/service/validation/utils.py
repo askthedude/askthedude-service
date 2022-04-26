@@ -21,6 +21,7 @@ VALIDATION_ERROR_MESSAGES = {
     "interested_num": "Number of interested people in project not valid",
     "role": "Role title not specified",
     "identifier_token": "identifier_token for anonymous user not present.",
+    "identifier_token_user_missing": "User with identifier_token as specified couldn't be found.",
     "technology_name": "Technology name is missing",
     "technology_url": "Technology url is missing"
 }

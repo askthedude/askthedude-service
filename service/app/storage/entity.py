@@ -124,3 +124,12 @@ class ProjectSubscription(Base):
     project_id = Column(ForeignKey('project.id'), nullable=False)
     active = Column(Boolean, default=True)
     email = Column(String, nullable=False)
+
+
+class UserTechnologyInterest(Base):
+    __tablename__ = 'user_technology_interest'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(ForeignKey('user.id'), nullable=False)
+    technology_id = Column(ForeignKey('technology.id'), nullable=False)
+    active = Column(Boolean, default=True)

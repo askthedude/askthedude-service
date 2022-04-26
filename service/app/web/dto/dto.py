@@ -123,3 +123,8 @@ class ProjectSubscriptionData(BaseModel):
 
 class AnonymousUserData(BaseModel):
     identifier_token: str
+
+
+class UserTechnologyInterestData(BaseModel):
+    user_identifier_token: str
+    technology_id: int

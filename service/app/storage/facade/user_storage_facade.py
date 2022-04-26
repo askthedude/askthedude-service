@@ -1,5 +1,6 @@
+from service.domain.domain import UserTechnologyInterest
 from service.exceptions.exceptions import StorageFacadeException, ResourceConflictException
-from web.dto.dto import UserFilter
+from web.dto.dto import UserFilter, UserTechnologyInterestData
 from web.dto.dto import PostUser, GetUser, PostRole, AnonymousUserData
 from storage.database import new_session
 from storage.storage import storage
@@ -100,6 +101,18 @@ async def filter_all_users(user_filter: UserFilter):
         await session.close()
 
 
+async def get_user_with_identifier_token(token: str):
+    session = new_session()
+    try:
+        anonymous_user = await storage.get_user_with_identifier_token(token, session)
+        return anonymous_user
+    except Exception as e:
+        print(e)
+        await session.rollback()
+        raise StorageFacadeException(e)
+    finally:
+        await session.close()
+
 async def add_anonymous_user(user: AnonymousUserData):
     session = new_session()
     try:
@@ -111,6 +124,21 @@ async def add_anonymous_user(user: AnonymousUserData):
             return res
         else:
             return anonymous_user
+    except Exception as e:
+        print(e)
+        await session.rollback()
+        raise StorageFacadeException(e)
+    finally:
+        await session.close()
+
+
+async def add_user_technology_interest(userTechnology: UserTechnologyInterest):
+    session = new_session()
+    try:
+        res = storage.add_user_technology_interest(userTechnology, session)
+        await session.commit()
+        await session.refresh(res)
+        return res
     except Exception as e:
         print(e)
         await session.rollback()

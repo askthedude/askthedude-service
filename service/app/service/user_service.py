@@ -1,7 +1,8 @@
 from service.exceptions.exceptions import ResourceNotFoundException, ValidationException
-from service.validation.validation import validate_new_role, ValidationResult, validate_anonymous_user
-from web.dto.dto import UserFilter, PostRole, AnonymousUserData
-from service.domain.domain import CompleteUserData, PartialProjectData, AnonymousUser
+from service.validation.validation import validate_new_role, ValidationResult, validate_anonymous_user, \
+    validate_user_technology_interest
+from web.dto.dto import UserFilter, PostRole, AnonymousUserData, UserTechnologyInterestData
+from service.domain.domain import CompleteUserData, PartialProjectData, AnonymousUser, UserTechnologyInterest
 
 import storage.facade.user_storage_facade as user_facade
 
@@ -47,5 +48,15 @@ async def add_anonymous_user(user: AnonymousUserData):
     validation_res: ValidationResult = validate_anonymous_user(user)
     if validation_res.valid:
         return await user_facade.add_anonymous_user(user)
+    else:
+        raise ValidationException("Anonymous user data not valid", validation_res.validationMessages)
+
+
+async def add_user_technology_interest(user_technology: UserTechnologyInterestData):
+    validation_res: ValidationResult = await validate_user_technology_interest(user_technology)
+    if validation_res.valid:
+        anonymous_user = await user_facade.get_user_with_identifier_token(user_technology.user_identifier_token)
+        user_tech = UserTechnologyInterest(user_technology.technology_id, anonymous_user.User.id)
+        return await user_facade.add_user_technology_interest(user_tech)
     else:
         raise ValidationException("Anonymous user data not valid", validation_res.validationMessages)
