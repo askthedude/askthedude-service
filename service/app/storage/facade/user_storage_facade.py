@@ -105,6 +105,7 @@ async def get_user_with_identifier_token(token: str):
     finally:
         await session.close()
 
+
 async def add_anonymous_user(user: AnonymousUserData):
     session = new_session()
     try:

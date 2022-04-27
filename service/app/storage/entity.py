@@ -130,6 +130,7 @@ class UserTechnologyInterest(Base):
     __tablename__ = 'user_technology_interest'
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(ForeignKey('user.id'), nullable=False)
+    user_id = Column(Integer, nullable=True)
+    user_token = Column(String, nullable=True)
     technology_id = Column(ForeignKey('technology.id'), nullable=False)
     active = Column(Boolean, default=True)

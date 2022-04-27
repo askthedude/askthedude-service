@@ -50,17 +50,3 @@ async def add_anonymous_user(user: AnonymousUserData):
         return await user_facade.add_anonymous_user(user)
     else:
         raise ValidationException("Anonymous user data not valid", validation_res.validationMessages)
-
-
-async def add_user_technology_interest(user_technology: UserTechnologyInterestData):
-    validation_res: ValidationResult = await validate_user_technology_interest(user_technology)
-    if validation_res.valid:
-        anonymous_user = await user_facade.get_user_with_identifier_token(user_technology.user_identifier_token)
-        interests = []
-        for technology_id in user_technology.technology_ids:
-            user_tech = UserTechnologyInterest(technology_id, anonymous_user.User.id)
-            new_interest = await user_facade.add_user_technology_interest(user_tech)
-            interests.append(new_interest)
-        return interests
-    else:
-        raise ValidationException("Anonymous user data not valid", validation_res.validationMessages)

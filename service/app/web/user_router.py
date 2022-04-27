@@ -47,12 +47,3 @@ async def add_user_device_token(user: AnonymousUserData):
     except StorageFacadeException as e:
         raise HTTPException(status_code=503, detail=e.errors)
 
-
-@router.post("/user/technology")
-async def add_user_technology_interest(user_technology_data: UserTechnologyInterestData):
-    try:
-        return await service.add_user_technology_interest(user_technology_data)
-    except ValidationException as e:
-        raise HTTPException(status_code=400, detail=e.errors)
-    except StorageFacadeException as e:
-        raise HTTPException(status_code=503, detail=e.errors)
