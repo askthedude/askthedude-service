@@ -10,24 +10,16 @@ async def add_new_user(user: PostUser):
     session = new_session()
     try:
         is_present = await _is_user_with_email_username_present(user.email, user.username, session)
-        is_token_present = await storage.get_user_with_identifier_token(user.identifier_token, session)
         if is_present:
             return None
-        if is_token_present is None:
-            res = storage.add_user_entity(user, session)
-            await session.flush()
-            role = await storage.get_role_entity_with_title("USER", session)
-            storage.add_user_role_entity(res.id, role.Role.id, session)
-            await session.commit()
-            await session.refresh(res)
-            return GetUser(id=res.id, username=res.username, name=res.name, email=res.email, is_active=res.is_active,
-                           github_url=res.github_url, linkedin_url=res.linkedin_url)
-        else:
-            res = await storage.update_user_entity(user, session)
-            await session.commit()
-            await session.flush()
-            return GetUser(id=res.User.id, username=res.User.username, name=res.User.name, email=res.User.email,
-                           is_active=res.User.is_active, github_url=res.User.github_url, linkedin_url=res.User.linkedin_url)
+        res = storage.add_user_entity(user, session)
+        await session.flush()
+        role = await storage.get_role_entity_with_title("USER", session)
+        storage.add_user_role_entity(res.id, role.Role.id, session)
+        await session.commit()
+        await session.refresh(res)
+        return GetUser(id=res.id, username=res.username, name=res.name, email=res.email, is_active=res.is_active,
+                       github_url=res.github_url, linkedin_url=res.linkedin_url)
     except Exception as e:
         await session.rollback()
         raise StorageFacadeException(e)
