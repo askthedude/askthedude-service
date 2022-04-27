@@ -28,12 +28,12 @@ def upgrade():
                     )
     op.create_table('user_technology_interest',
                     sa.Column('id', sa.Integer(), nullable=False),
-                    sa.Column('user_id', sa.Integer(), nullable=False),
+                    sa.Column('user_id', sa.Integer()),
+                    sa.Column('user_token', sa.String()),
                     sa.Column('technology_id', sa.Integer(), nullable=False),
                     sa.Column('active', sa.Boolean(), nullable=False, default=True),
-                    sa.ForeignKeyConstraint(['user_id'], ['user.id']),
                     sa.ForeignKeyConstraint(['technology_id'], ['technology.id']),
-                    sa.UniqueConstraint('user_id', 'technology_id'),
+                    sa.UniqueConstraint('technology_id'),
                     sa.PrimaryKeyConstraint('id')
                     )
 
