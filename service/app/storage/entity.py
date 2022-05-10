@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Boolean, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from .database import Base
 
@@ -134,3 +134,18 @@ class UserTechnologyInterest(Base):
     user_token = Column(String, nullable=True)
     technology_id = Column(ForeignKey('technology.id'), nullable=False)
     active = Column(Boolean, default=True)
+
+
+class Comment(Base):
+    __tablename__ = 'comment'
+
+    id = Column(Integer, primary_key=True)
+    project_id = Column(ForeignKey('project.id'), nullable=False)
+    user_id = Column(ForeignKey('user.id'), nullable=True)
+    parent_comment_id = Column(ForeignKey('comment.id'), nullable=True)
+    content = Column(String, nullable=False)
+    created_timestamp = Column(String, nullable=False)
+    edited_timestamp = Column(String, nullable=False)
+    active = Column(Boolean, default=True)
+
+    replies = relationship('comment', backref=backref('parent', remote_side=[id]))
