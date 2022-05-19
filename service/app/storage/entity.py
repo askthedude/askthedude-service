@@ -148,4 +148,4 @@ class Comment(Base):
     edited_timestamp = Column(String, nullable=False)
     active = Column(Boolean, default=True)
 
-    replies = relationship('comment', backref=backref('parent', remote_side=[id]))
+    # replies = relationship('comment', backref=backref('parent', remote_side=[id]))

@@ -68,7 +68,7 @@ async def add_new_subscription_for_project(subscription: ProjectSubscriptionData
 async def add_comment_to_project(comment: AddCommentDto):
     validation_result: ValidationResult = await validate_comment_for_project(comment)
     if validation_result.valid:
-        result = project_facade.add_comment_for_project(comment)
+        result = await project_facade.add_comment_for_project(comment)
         # result_comment = GetcommentDto(id=result.id)
         return result
     else:

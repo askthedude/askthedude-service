@@ -1,6 +1,6 @@
 from typing import List
 
-from service.validation.utils import VALIDATION_ERROR_MESSAGES, regex, PASSWORD_MIN_LENGTH
+from service.validation.utils import VALIDATION_ERROR_MESSAGES, regex, PASSWORD_MIN_LENGTH, COMMENT_MIN_LENGTH
 from storage.facade.project_storage_facade import filter_technologies, get_project_by_id
 from storage.facade.user_storage_facade import get_user_with_identifier_token, get_user_profile_with_id
 from web.dto.dto import PostUser, SignInUser, PostProject, TechnologyFilter, ProjectSubscriptionData, \
@@ -167,7 +167,7 @@ async def validate_comment_for_project(comment: AddCommentDto) -> ValidationResu
         if user is None:
             result.valid = False
             result.validationMessages.append(VALIDATION_ERROR_MESSAGES["user"])
-    if comment.content is None or len(comment.content.strip()):
+    if comment.content is None or len(comment.content.strip()) < COMMENT_MIN_LENGTH:
         result.valid = False
         result.validationMessages.append(VALIDATION_ERROR_MESSAGES["comment"])
     return result

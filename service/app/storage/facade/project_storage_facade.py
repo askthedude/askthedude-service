@@ -114,7 +114,9 @@ async def update_project_stats(id: int, stats: PostStatistics):
 async def add_comment_for_project(comment):
     session = new_session()
     try:
-        res = await storage.add_comment_to_project(comment, session)
+        res = storage.add_comment_to_project(comment, session)
+        await session.commit()
+        await session.refresh(res)
         return res
     except Exception as e:
         await session.rollback()
