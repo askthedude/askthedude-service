@@ -6,7 +6,7 @@ from sqlalchemy.orm import subqueryload, contains_eager
 
 from .entity import User, Project, Technology, UserProjectAssociation, \
     ProjectTechnologyAssociation, Role, UserRoleAssociation, UserProjectAssociationType, \
-    ProjectStatistics, ProjectSubscription, UserTechnologyInterest
+    ProjectStatistics, ProjectSubscription, UserTechnologyInterest, Comment
 
 import datetime
 
@@ -198,5 +198,11 @@ class Storage():
         session.add(user_tech)
         return user_tech
 
+    def add_comment_to_project(self, comment, session: AsyncSession):
+        comment = Comment(project_id=comment.project_id, user_id = comment.user_id, parent_comment_id=comment.parent_comment_id
+                          , content=comment.content, created_timestamp=comment.created_timestamp, edited_timestamp=comment.edited_timestamp,
+                          active=comment.active)
+        session.add(comment)
+        return comment
 # export singleton storage
 storage = Storage()

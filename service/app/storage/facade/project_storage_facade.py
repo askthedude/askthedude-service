@@ -109,3 +109,16 @@ async def update_project_stats(id: int, stats: PostStatistics):
         raise StorageFacadeException(e)
     finally:
         await session.close()
+
+
+async def add_comment_for_project(comment):
+    session = new_session()
+    try:
+        res = await storage.add_comment_to_project(comment, session)
+        return res
+    except Exception as e:
+        await session.rollback()
+        print(e)
+        raise StorageFacadeException(e)
+    finally:
+        await session.close()

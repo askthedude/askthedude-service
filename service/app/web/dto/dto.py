@@ -128,3 +128,21 @@ class AnonymousUserData(BaseModel):
 class UserTechnologyInterestData(BaseModel):
     user_identifier_token: str
     technology_ids: List[int]
+
+
+class AddCommentDto(BaseModel):
+    project_id: int
+    user_id: Optional[int]
+    parent_comment_id: Optional[int]
+    content: str
+
+
+class GetcommentDto(BaseModel):
+    id: int
+    project_id: int
+    user_id: Optional[int]
+    parent_comment_id: Optional[int]
+    content: str
+    active: bool
+    created_timestamp: str
+    edited_timestamp: str

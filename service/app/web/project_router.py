@@ -3,9 +3,10 @@ from starlette.requests import Request
 
 from service.exceptions.exceptions import ValidationException, NotAuthorizedException, StorageFacadeException, \
     ResourceNotFoundException
-from web.dto.dto import PostProject, ProjectFilter, PostStatistics, ProjectSubscriptionData
+from web.dto.dto import PostProject, ProjectFilter, PostStatistics, ProjectSubscriptionData, AddCommentDto
 from service.project_service import add_new_project, \
-    search_projects, get_project_by_id, post_project_statistics, add_new_subscription_for_project
+    search_projects, get_project_by_id, post_project_statistics, add_new_subscription_for_project, \
+    add_comment_to_project
 from web.helper.auth_helper import check_user_auth
 
 router = APIRouter()
@@ -56,6 +57,16 @@ async def filter_query_projects(id: int):
 async def update_project_statistics(id: int, stats: PostStatistics):
     try:
         return await post_project_statistics(id, stats)
+    except ValidationException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
+    except StorageFacadeException as e:
+        raise HTTPException(status_code=503, detail=e.errors)
+
+
+@router.post("/project/comment")
+async def add_comment(addComment: AddCommentDto):
+    try:
+        return await add_comment_to_project(addComment)
     except ValidationException as e:
         raise HTTPException(status_code=400, detail=e.errors)
     except StorageFacadeException as e:

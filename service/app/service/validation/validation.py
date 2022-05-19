@@ -2,10 +2,9 @@ from typing import List
 
 from service.validation.utils import VALIDATION_ERROR_MESSAGES, regex, PASSWORD_MIN_LENGTH
 from storage.facade.project_storage_facade import filter_technologies, get_project_by_id
-from storage.facade.user_storage_facade import get_user_with_identifier_token
-from storage.storage import storage
+from storage.facade.user_storage_facade import get_user_with_identifier_token, get_user_profile_with_id
 from web.dto.dto import PostUser, SignInUser, PostProject, TechnologyFilter, ProjectSubscriptionData, \
-    PostStatistics, PostRole, AnonymousUserData, PostTechnology, UserTechnologyInterestData
+    PostStatistics, PostRole, AnonymousUserData, PostTechnology, UserTechnologyInterestData, AddCommentDto
 from dataclasses import dataclass, field
 import re
 
@@ -154,4 +153,21 @@ async def validate_user_technology_interest(userTechnology: UserTechnologyIntere
     if userTechnology.technology_ids is None or len(userTechnology.technology_ids) == 0:
         result.valid = False
         result.validationMessages.append(VALIDATION_ERROR_MESSAGES["technologies"])
+    return result
+
+
+async def validate_comment_for_project(comment: AddCommentDto) -> ValidationResult:
+    result = ValidationResult()
+    query_project = await get_project_by_id(comment.project_id)
+    if query_project is None:
+        result.valid=False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["project"])
+    if comment.user_id is not None:
+        user = await get_user_profile_with_id(comment.user_id)
+        if user is None:
+            result.valid = False
+            result.validationMessages.append(VALIDATION_ERROR_MESSAGES["user"])
+    if comment.content is None or len(comment.content.strip()):
+        result.valid = False
+        result.validationMessages.append(VALIDATION_ERROR_MESSAGES["comment"])
     return result

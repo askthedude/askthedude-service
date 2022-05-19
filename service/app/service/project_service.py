@@ -2,11 +2,11 @@ from typing import Optional, List
 
 from service.exceptions.exceptions import ValidationException, ResourceNotFoundException
 from service.validation.validation import validate_new_project, ValidationResult, validate_project_subscription, \
-    validate_project_statistics
+    validate_project_statistics, validate_comment_for_project
 from web.dto.dto import PostProject, \
-    GetProject, ProjectFilter, PostStatistics, ProjectSubscriptionData
+    GetProject, ProjectFilter, PostStatistics, ProjectSubscriptionData, AddCommentDto, GetcommentDto
 from service.domain.domain import PartialProjectData, TechnologyData, \
-    CompleteProjectData, StatisticsData, UserData, ProjectSubscription
+    CompleteProjectData, StatisticsData, UserData
 
 import storage.facade.project_storage_facade as project_facade
 
@@ -63,3 +63,13 @@ async def add_new_subscription_for_project(subscription: ProjectSubscriptionData
         return result
     else:
         raise ValidationException("Project subscription validation failed", validation_result.validationMessages)
+
+
+async def add_comment_to_project(comment: AddCommentDto):
+    validation_result: ValidationResult = await validate_comment_for_project(comment)
+    if validation_result.valid:
+        result = project_facade.add_comment_for_project(comment)
+        # result_comment = GetcommentDto(id=result.id)
+        return result
+    else:
+        raise ValidationException("Comment validation failed", validation_result.validationMessages)
