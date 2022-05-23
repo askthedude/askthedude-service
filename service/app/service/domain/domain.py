@@ -69,6 +69,7 @@ class CommentData:
     content: str
     active: bool
     created_timestamp: str
+    replies: List
 
 
 @dataclass

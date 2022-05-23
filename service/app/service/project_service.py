@@ -1,3 +1,4 @@
+import json
 from typing import Optional, List
 
 from service.exceptions.exceptions import ValidationException, ResourceNotFoundException
@@ -37,8 +38,8 @@ async def get_project_by_id(id: int):
     users = [UserData(user.user.id, user.user.username, user.user.email, user.user.github_url, user.user.name, user.user.is_active, user.user.linkedin_url) for user in project.Project.users]
     sample_stats = project.Project.statistics[0]
     stats = StatisticsData(sample_stats.id, sample_stats.number_of_interested, sample_stats.subscriptions, sample_stats.seen_frequency)
-    new_comments = [CommentData(comment.id, comment.project_id, user_id=comment.user_id, parent_comment_id=comment.parent_comment_id,
-                                content=comment.content, active=comment.active, created_timestamp=comment.created_timestamp) for comment in  project.Project.comments]
+    new_comments = [comment.as_dict() for comment in project.Project.comments]
+    # No nested comments supported yet, neet to look at this flow one more time.
     result = CompleteProjectData(project.Project.title, project.Project.description, project.Project.stars,
                                  project.Project.is_active, project.Project.id, project.Project.url,
                                  project.Project.start_date, technologies, users, stats, new_comments)

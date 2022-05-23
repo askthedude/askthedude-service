@@ -39,6 +39,7 @@ class Project(Base):
     statistics = relationship('ProjectStatistics', back_populates="project")
     comments = relationship('Comment', back_populates="project")
 
+
 class Technology(Base):
     __tablename__ = "technology"
 
@@ -74,7 +75,6 @@ class UserProjectAssociationType(Base):
 
 class ProjectTechnologyAssociation(Base):
     __tablename__ = 'project_technology_association'
-
 
     id = Column(Integer, primary_key=True)
     project_id = Column(ForeignKey('project.id'), nullable=False)
@@ -149,4 +149,8 @@ class Comment(Base):
     active = Column(Boolean, default=True)
 
     project = relationship('Project', back_populates="comments")
-    # replies = relationship('comment', backref=backref('parent', remote_side=[id]))
+    replies = relationship('Comment', backref=backref('parent', remote_side=[id]),
+                           lazy='select')
+
+    def as_dict(self):
+        return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
