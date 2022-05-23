@@ -1,9 +1,18 @@
 version: "3.3"
 
 services:
+  reverse_proxy:
+    build: ./reverse_proxy
+    container_name: reverse_proxy
+    ports:
+      - 80:80
+    command:
+      - /usr/sbin/nginx
+      - -g
+      - daemon off;
   api:
     build: ../../service
-    container_name: sandbox-web
+    container_name: api
     ports:
       - 8084:8084
     command:
@@ -12,7 +21,16 @@ services:
       - --host
       - '0.0.0.0'
       - --port
-      - '80'
+      - '8084'
+  storage:
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - storage:/var/lib/postgresql/data
 volumes:
   storage:
-    driver: local

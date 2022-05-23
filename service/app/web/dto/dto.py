@@ -75,7 +75,7 @@ LIMIT_CONSTANT = 10
 OFFSET_INIT_CONSTANT = 0
 
 
-# Below Dto is filled with default values to have flags for cases when outputs
+# Below Dto is filled with default.conf values to have flags for cases when outputs
 # shouldn't be filtered by specific field
 class ProjectFilter(BaseModel):
     title: Optional[str] = ""

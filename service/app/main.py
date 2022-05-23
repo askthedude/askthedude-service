@@ -44,7 +44,7 @@ HEALTH_STATUSES = {
 }
 
 
-@app.get("/healthcheck")
+@app.get("/api/healthcheck")
 async def healthcheck():
     res = await healthcheck_service.healthcheck()
     if res is None:

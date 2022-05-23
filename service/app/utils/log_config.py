@@ -14,21 +14,21 @@ class LogConfig(BaseModel):
     version = 1
     disable_existing_loggers = False
     formatters = {
-        "default": {
+        "default.conf": {
             "()": "uvicorn.logging.DefaultFormatter",
             "fmt": LOG_FORMAT,
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     }
     handlers = {
-        "default": {
-            "formatter": "default",
+        "default.conf": {
+            "formatter": "default.conf",
             "class": "logging.StreamHandler",
             "stream": "ext://sys.stderr",
         },
     }
     loggers = {
-        "mycoolapp": {"handlers": ["default"], "level": LOG_LEVEL},
+        "mycoolapp": {"handlers": ["default.conf"], "level": LOG_LEVEL},
     }
 
 
