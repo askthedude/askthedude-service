@@ -149,8 +149,7 @@ class Comment(Base):
     active = Column(Boolean, default=True)
 
     project = relationship('Project', back_populates="comments")
-    replies = relationship('Comment', backref=backref('parent', remote_side=[id]),
-                           lazy='select')
+    replies = relationship('Comment')
 
     def as_dict(self):
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}

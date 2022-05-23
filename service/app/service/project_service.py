@@ -4,6 +4,7 @@ from typing import Optional, List
 from service.exceptions.exceptions import ValidationException, ResourceNotFoundException
 from service.validation.validation import validate_new_project, ValidationResult, validate_project_subscription, \
     validate_project_statistics, validate_comment_for_project
+from utils.mappers import get_comments_tree
 from web.dto.dto import PostProject, \
     GetProject, ProjectFilter, PostStatistics, ProjectSubscriptionData, AddCommentDto
 from service.domain.domain import PartialProjectData, TechnologyData, \
@@ -29,6 +30,10 @@ async def search_projects(project_filter: ProjectFilter) -> List[PartialProjectD
         result.append(PartialProjectData(project.Project.title, project.Project.description, project.Project.stars, project.Project.is_active, project.Project.id, project.Project.url, project.Project.start_date, techs, users))
     return result
 
+#
+#   1
+#       2
+#           3
 
 async def get_project_by_id(id: int):
     project = await project_facade.get_project_by_id(id)
@@ -38,11 +43,12 @@ async def get_project_by_id(id: int):
     users = [UserData(user.user.id, user.user.username, user.user.email, user.user.github_url, user.user.name, user.user.is_active, user.user.linkedin_url) for user in project.Project.users]
     sample_stats = project.Project.statistics[0]
     stats = StatisticsData(sample_stats.id, sample_stats.number_of_interested, sample_stats.subscriptions, sample_stats.seen_frequency)
-    new_comments = [comment.as_dict() for comment in project.Project.comments]
+    # new_comments = [comment.as_dict() for comment in project.Project.comments]
     # No nested comments supported yet, neet to look at this flow one more time.
+    nested_comment_tree = get_comments_tree(project.Project.comments)
     result = CompleteProjectData(project.Project.title, project.Project.description, project.Project.stars,
                                  project.Project.is_active, project.Project.id, project.Project.url,
-                                 project.Project.start_date, technologies, users, stats, new_comments)
+                                 project.Project.start_date, technologies, users, stats, nested_comment_tree)
     return result
 
 
