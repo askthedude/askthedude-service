@@ -44,7 +44,7 @@ async def add_project_subscription(project_subscription: ProjectSubscriptionData
 
 
 @router.get("/project/{id}")
-async def filter_query_projects(id: int):
+async def query_project(id: int):
     try:
         return await get_project_by_id(id)
     except ResourceNotFoundException as e:

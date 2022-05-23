@@ -37,7 +37,7 @@ class Project(Base):
     users = relationship('UserProjectAssociation', back_populates='project')
     technologies = relationship('ProjectTechnologyAssociation', back_populates='project')
     statistics = relationship('ProjectStatistics', back_populates="project")
-
+    comments = relationship('Comment', back_populates="project")
 
 class Technology(Base):
     __tablename__ = "technology"
@@ -148,4 +148,5 @@ class Comment(Base):
     edited_timestamp = Column(String, nullable=False)
     active = Column(Boolean, default=True)
 
+    project = relationship('Project', back_populates="comments")
     # replies = relationship('comment', backref=backref('parent', remote_side=[id]))

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -61,6 +61,17 @@ class StatisticsData:
 
 
 @dataclass
+class CommentData:
+    id: int
+    project_id: int
+    user_id: Optional[int]
+    parent_comment_id: Optional[int]
+    content: str
+    active: bool
+    created_timestamp: str
+
+
+@dataclass
 class CompleteProjectData:
     title: str
     description: str
@@ -72,6 +83,7 @@ class CompleteProjectData:
     technologies: List[TechnologyData]
     users: List[UserData]
     stats: StatisticsData
+    comments: List[CommentData]
 
 
 @dataclass
@@ -84,3 +96,4 @@ class ProjectSubscription:
 class UserTechnologyInterest:
     technology_id: int
     user_id: int
+

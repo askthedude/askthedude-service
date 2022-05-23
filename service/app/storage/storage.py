@@ -135,6 +135,7 @@ class Storage():
             .options(subqueryload(Project.technologies).subqueryload(ProjectTechnologyAssociation.technology)) \
             .options(subqueryload(Project.users).subqueryload(UserProjectAssociation.user)) \
             .options(subqueryload(Project.statistics)) \
+            .options(subqueryload(Project.comments)) \
             .filter(Project.id == id)
         res = await session.execute(q)
         return res.first()
