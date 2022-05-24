@@ -30,10 +30,6 @@ async def search_projects(project_filter: ProjectFilter) -> List[PartialProjectD
         result.append(PartialProjectData(project.Project.title, project.Project.description, project.Project.stars, project.Project.is_active, project.Project.id, project.Project.url, project.Project.start_date, techs, users))
     return result
 
-#
-#   1
-#       2
-#           3
 
 async def get_project_by_id(id: int):
     project = await project_facade.get_project_by_id(id)
