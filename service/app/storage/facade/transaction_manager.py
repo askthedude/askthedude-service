@@ -11,7 +11,6 @@ async def run_with_transaction(work, session=None, should_commit=True, should_re
         result = await work(session)
         if should_commit: await session.commit()
         if should_refresh and result is not None: await session.refresh(result)
-        print('asdasd',result)
         return result
     except Exception as e:
         print(e) # refactor using correct logging method
