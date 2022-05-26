@@ -11,6 +11,7 @@ async def add_new_project(project: PostProject, user_id: int) -> Optional[GetPro
     async def work(session):
         proj = storage.add_project_entity(project, session)
         await session.flush()
+        await session.refresh(proj)
         res = await storage.find_user_project_assoc_type_with_title("ADMIN", session)
         storage.add_project_user_relation(proj.id, user_id, res[0], session)
         for tech_id in project.technology_ids:
@@ -33,7 +34,6 @@ async def filter_projects(project_filter: ProjectFilter):
 async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
     async def work(session):
         tech = storage.add_technology(technology, session)
-        await session.refresh(tech)
         return tech
     return await run_with_transaction(work)
 
@@ -41,7 +41,6 @@ async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnolo
 async def add_new_subscription_project(subscription: ProjectSubscriptionData):
     async def work(session):
         new_subscription = storage.add_subscription(subscription, session)
-        await session.refresh(new_subscription)
         return new_subscription
     return await run_with_transaction(work)
 
@@ -70,6 +69,5 @@ async def update_project_stats(id: int, stats: PostStatistics):
 async def add_comment_for_project(comment):
     async def work(session):
         res = storage.add_comment_to_project(comment, session)
-        await session.refresh(res)
         return res
     return await run_with_transaction(work)

@@ -22,6 +22,12 @@ class FailedLoginException(Exception):
         self.errors = errors
 
 
+class FailedSignupException(Exception):
+    def __init__(self, message, errors="Couldn't signup with input parameters. Please change email and username."):
+        super().__init__(message)
+        self.errors = errors
+
+
 class NotAuthorizedException(Exception):
     def __init__(self, message, errors="Couldn't authorize user of the request"):
         super().__init__(message)

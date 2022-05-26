@@ -12,6 +12,7 @@ class GetUser(BaseModel):
     is_active: bool
     github_url: Optional[str]
     linkedin_url: Optional[str]
+    anonymous: bool = False
 
 
 class GetUserWithoutId(BaseModel):
@@ -31,6 +32,7 @@ class PostUser(BaseModel):
     github_url: Optional[str]
     linkedin_url: Optional[str]
     identifier_token: str
+    anonymous: Optional[bool] = False
 
 
 class SignInUser(BaseModel):

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 import service.auth_service as service
 from service.exceptions.exceptions import ValidationException, CryptoException, StorageFacadeException, \
-    FailedLoginException
+    FailedLoginException, FailedSignupException
 from web.dto.dto import PostUser, SignInUser
 
 router = APIRouter()
@@ -18,6 +18,8 @@ async def signup(user: PostUser):
         raise HTTPException(status_code=400, detail=e.errors)
     except StorageFacadeException as e:
         raise HTTPException(status_code=503, detail=e.errors)
+    except FailedSignupException as e:
+        raise HTTPException(status_code=400, detail=e.errors)
 
 
 @router.post("/signin/")

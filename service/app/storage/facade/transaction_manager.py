@@ -5,11 +5,13 @@ from storage.database import new_session
 # Review this code and refactor all facade methods that use sessions of SQL to use this abstraction layer
 # This is a policy to follow/use when you want to communicate with Postgres Database.
 # This function takes care of transactions
-async def run_with_transaction(work, session=None, should_commit=True):
+async def run_with_transaction(work, session=None, should_commit=True, should_refresh=False):
     if session is None: session = new_session()
     try:
         result = await work(session)
         if should_commit: await session.commit()
+        if should_refresh and result is not None: await session.refresh(result)
+        print('asdasd',result)
         return result
     except Exception as e:
         print(e) # refactor using correct logging method

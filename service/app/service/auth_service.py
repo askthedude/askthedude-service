@@ -1,4 +1,5 @@
-from service.exceptions.exceptions import ValidationException, CryptoException, FailedLoginException
+from service.exceptions.exceptions import ValidationException, CryptoException, FailedLoginException, \
+    FailedSignupException
 from service.validation.validation import validate_add_user, ValidationResult, validate_sign_in_user
 from utils.auth import get_hashed_password, check_password, HASHING_ERROR
 from web.dto.dto import PostUser, SignInUser, GetUser
@@ -15,6 +16,8 @@ async def add_new_user(user: PostUser):
             raise CryptoException("Error while trying to hash input password", "Couldn't hash password")
         user.password = hashed_psswd
         result = await user_facade.add_new_user(user)
+        if result is None:
+            raise FailedSignupException("User signup failed")
         return {"token": signJWT(result.id), "user": result}
     else:
         raise ValidationException("Add User Validation failed", validation_result.validationMessages)
