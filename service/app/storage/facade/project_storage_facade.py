@@ -1,16 +1,14 @@
 from typing import Optional
-from service.exceptions.exceptions import StorageFacadeException
+from storage.facade.transaction_manager import run_with_transaction
 
 from web.dto.dto import ProjectFilter, PostProject, \
     GetProject, PostTechnology, GetTechnology, PostStatistics, TechnologyFilter, \
     ProjectSubscriptionData
-from storage.database import new_session
 from storage.storage import storage
 
 
 async def add_new_project(project: PostProject, user_id: int) -> Optional[GetProject]:
-    session = new_session()
-    try:
+    async def work(session):
         proj = storage.add_project_entity(project, session)
         await session.flush()
         res = await storage.find_user_project_assoc_type_with_title("ADMIN", session)
@@ -18,109 +16,60 @@ async def add_new_project(project: PostProject, user_id: int) -> Optional[GetPro
         for tech_id in project.technology_ids:
             storage.add_project_technology_relation(proj.id, tech_id, session)
         storage.add_blank_project_frequency_entity(proj.id, session)
-        await session.commit()
         res = GetProject(id=proj.id, title=proj.title, description=proj.description, start_date=proj.start_date,
-                          stars=proj.stars, github_url=proj.url, url=proj.url, is_active=proj.is_active, user_id=user_id,
+                         stars=proj.stars, github_url=proj.url, url=proj.url, is_active=proj.is_active, user_id=user_id,
                          technology_ids=project.technology_ids)
         return res
-    except Exception as e:
-        print(e)
-        await session.rollback()
-        raise StorageFacadeException(e)
-    finally:
-        await session.close()
+    return await run_with_transaction(work)
 
 
 async def filter_projects(project_filter: ProjectFilter):
-    session = new_session()
-    try:
+    async def work(session):
         projects = await storage.filter_projects(project_filter, session)
         return projects
-    except Exception as e:
-        print(e)
-        raise StorageFacadeException(e)
-    finally:
-        await session.close()
+    return await run_with_transaction(work)
 
 
 async def add_new_technology(technology: PostTechnology) -> Optional[GetTechnology]:
-    session = new_session()
-    try:
+    async def work(session):
         tech = storage.add_technology(technology, session)
-        await session.commit()
         await session.refresh(tech)
         return tech
-    except Exception as e:
-        await session.rollback()
-        print(e)
-        raise StorageFacadeException(e)
-    finally:
-        await session.close()
+    return await run_with_transaction(work)
 
 
 async def add_new_subscription_project(subscription: ProjectSubscriptionData):
-    session = new_session()
-    try:
+    async def work(session):
         new_subscription = storage.add_subscription(subscription, session)
-        await session.commit()
         await session.refresh(new_subscription)
         return new_subscription
-    except Exception as e:
-        await session.rollback()
-        print(e)
-        raise StorageFacadeException(e)
-    finally:
-        await session.close()
+    return await run_with_transaction(work)
 
 
 async def get_project_by_id(id: int):
-    session = new_session()
-    try:
+    async def work(session):
         res = await storage.get_project_by_id(id, session)
         return res
-    except Exception as e:
-        print(e)
-        raise StorageFacadeException(e)
-    finally:
-        await session.close()
+    return await run_with_transaction(work)
 
 
 async def filter_technologies(tech_filter: TechnologyFilter):
-    session = new_session()
-    try:
+    async def work(session):
         techs = await storage.filter_technologies(tech_filter.title, session)
         return techs
-    except Exception as e:
-        print(e)
-        raise StorageFacadeException(e)
-    finally:
-        await session.close()
+    return await run_with_transaction(work)
 
 
 async def update_project_stats(id: int, stats: PostStatistics):
-    session = new_session()
-    try:
+    async def work(session):
         techs = await storage.update_project_stats(id, stats, session)
-        await session.commit()
         return techs
-    except Exception as e:
-        await session.rollback()
-        print(e)
-        raise StorageFacadeException(e)
-    finally:
-        await session.close()
+    return await run_with_transaction(work)
 
 
 async def add_comment_for_project(comment):
-    session = new_session()
-    try:
+    async def work(session):
         res = storage.add_comment_to_project(comment, session)
-        await session.commit()
         await session.refresh(res)
         return res
-    except Exception as e:
-        await session.rollback()
-        print(e)
-        raise StorageFacadeException(e)
-    finally:
-        await session.close()
+    return await run_with_transaction(work)
